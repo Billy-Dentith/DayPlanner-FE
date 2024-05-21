@@ -1,0 +1,77 @@
+
+export const MARKERS_DATA = [
+    {
+      id: '1',
+      latitude: 51.50829819014548, 
+      longitude: -0.07600871499717765,
+      color: '#98AFE9',
+      name: 'Tower of London',
+      direction: 'London, EC3N 4AB',
+    },
+    {
+      id: '2',
+      latitude: 51.506213694402255, 
+      longitude: -0.07563680611456751,
+      color: '#4E87EB',
+      name: 'Tower Bridge',
+      direction: 'Tower Bridge Road, London, SE1 2UP',
+    },
+    {
+      id: '3',
+      latitude: 51.50619656172608,
+      longitude: -0.09028852010595596,
+      color: '#E990BB',
+      name: 'Borough Market',
+      direction: 'London, SE1 9AL',
+    },
+    {
+      id: '4',
+      latitude: 51.51437965374519, 
+      longitude: -0.09824395204175285,
+      color: '#EFD080',
+      name: 'St. Paul\'s Cathedral',
+      direction: 'St. Paul\'s Churchyard, London, EC4M 8AD',
+    },
+    {
+      id: '5',
+      latitude: 51.503697871362085, 
+      longitude: -0.12546284595225768,
+      color: '#98AFE9',
+      name: 'London Eye',
+      direction: 'Riverside Building, County Hall, London, SE1 7BP',
+    },
+    {
+      id: '6',
+      latitude: 51.501476676579074, 
+      longitude: -0.12443304086552472,
+      color: '#4E87EB',
+      name: 'Big Ben',
+      direction: 'London, SW1A 0AA',
+    },
+    {
+      id: '7',
+      latitude: 51.52000113025769, 
+      longitude: -0.1270213724667086,
+      color: '#2F3136',
+      name: 'The British Museum',
+      direction: 'Great Russell St, London, WC1B 3DG',
+    },
+    {
+      id: '8',
+      latitude: 51.501979241551666, 
+      longitude: -0.14178156877149684,
+      color: '#A3EAD8',
+      name: 'Buckingham Palace',
+      direction: 'London, SW1A 1AA',
+    },
+    {
+      id: '9',
+      direction: 'Great Russel Street, WC1B 3DG',
+      latitude: 51.507871026761805, 
+      longitude: -0.16404926801196054,
+      color: '#E990BB',
+      name: 'Hyde Park',
+      direction: 'Hyde Park, W2 2UH',
+    }
+  ];
+  
