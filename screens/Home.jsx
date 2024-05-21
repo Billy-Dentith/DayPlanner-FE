@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { Marker, Polyline, Polygon, Callout } from "react-native-maps";
 import MapView from 'react-native-maps'
-import MapViewDirections from 'react-native-maps-directions';
+// import MapViewDirections from 'react-native-maps-directions';
 import * as Location from "expo-location";
 import mapStyle from "../styles/mapStyle";
 import { MARKERS_DATA } from "../data";
@@ -80,7 +80,7 @@ export default function MapScreen() {
         style={styles.map}
         customMapStyle={mapStyle}
         // provider="google"
-        googleMapsApiKey="AIzaSyA_yYlqJPS6gu50NJB3lD7ntyQtwqQ8xUg"
+        googleMapsApiKey={`${process.env.GOOGLE_API_KEY}`}
         ref={mapRef}
         initialRegion={initialRegion}
       >
@@ -97,24 +97,15 @@ export default function MapScreen() {
             }}
             image={require("../assets/map_marker.png")}
           />
-          // <CustomMarker
-          //   key={location.id}
-          //   id={location.id}
-          //   selectedMarker={location}
-          //   color={location.color}
-          //   latitude={location.latitude}
-          //   longitude={location.longitude}
-          //   setSelectedLocation={setSelectedLocation}
-          // ></CustomMarker>
         ))}
-    <MapViewDirections 
+    {/* <MapViewDirections 
       origin={directions[0]}
       destination={directions[1]}
-      apikey='AIzaSyCpXQ_Jqv8Pv9yQiKvahvD_tMvwOA4TKaw'
+      apikey={`${process.env.GOOGLE_API_KEY}`}
       strokeWidth={4}
       strokeColor='#111111'/>
     <Marker coordinate={directions[0]}/>
-    <Marker coordinate={directions[1]}/>
+    <Marker coordinate={directions[1]}/> */}
       </MapView>
       <FlatList
         data={MARKERS_DATA}

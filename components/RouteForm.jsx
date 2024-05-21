@@ -1,71 +1,77 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet } from "react-native";
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-// import axios from 'axios'
+import RNPickerSelect from 'react-native-picker-select'
 
 const validationSchema = Yup.object().shape({
-    start: Yup
+    city: Yup
         .string()
-        .required('Start point is required'),
-    end: Yup
+        .required('City is required'),
+    startTime: Yup
         .string()
-        .required('End point is required'),
-    numberOfSights: Yup
+        .required('Start time is required'),
+    endTime: Yup
         .number()
-        .required('Number of sights is required')
+        .required('End time is required')
 })
 
 export default RouteForm =() => {
+    const [selectedCity, setSelectedCity] = useState();
+
     return (
         <Formik
-            initialValues={{ start: '',  end: '', numberOfSights: ''}}
+            initialValues={{ 
+                city: '',  
+                startTime: '', 
+                endTime: ''
+            }}
             validationSchema={validationSchema}
             onSubmit={(values) => {
                 console.log(values)
-                // axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=liverpool+street,+london,+EC2M7PY`)
-                // .then((res) => {
-                //     console.log(res.data);
-                // })
             }}
         >
         {({ handleChange, handleBlur, handleSubmit, values, errors, isValid }) => (
             <View style={styles.loginContainer}>
-                <Text>Start Point:</Text>
-                <TextInput
-                    name='start'
-                    placeholder="Start Point"
-                    style={styles.textInput}
-                    onChangeText={handleChange('start')}
-                    onBlur={handleBlur('start')}
-                    value={values.start}
+                <Text style={styles.text}>City:</Text>
+                <RNPickerSelect
+                    style={{...pickerStyles}}
+                    onValueChange={handleChange('city')}
+                    onBlur={handleChange('city')}
+                    items={[
+                        { label: 'London', value: 'england'},
+                        { label: 'Manchester', value: 'manchester'},
+                        { label: 'Birmingham', value: 'birmingham'},
+                        { label: 'Liverpool', value: 'liverpool'},
+                    ]}
+                    value={values.city}
                 />
-                {errors.start &&
-                    <Text style={styles.errorText}>Start point must be provided</Text>
+                {errors.city &&
+                    <Text style={styles.errorText}>City must be provided</Text>
                 }
-                <Text>End Point:</Text>
+                <Text style={styles.text}>Start Time:</Text>
                 <TextInput
-                    name='end'
-                    placeholder="End Point"
+                    name='start time'
+                    placeholder="Start Time"
                     style={styles.textInput}
-                    onChangeText={handleChange('end')}
-                    onBlur={handleBlur('end')}
-                    value={values.end}
+                    onChangeText={handleChange('start time')}
+                    onBlur={handleBlur('start time')}
+                    value={values.startTime}
                 />
                 {errors.end &&
-                    <Text style={styles.errorText}>End point must be provided</Text>
+                    <Text style={styles.errorText}>Start time must be provided</Text>
                 }
-                <Text>Number of Sights:</Text>
+                <Text style={styles.text}>End Time:</Text>
                 <TextInput
-                    name='number of sights'
-                    placeholder="Number of Sights"
+                    name='end time'
+                    placeholder="End Time"
                     style={styles.textInput}
-                    onChangeText={handleChange('numberOfSights')}
-                    onBlur={handleBlur('numberOfSights')}
-                    value={values.numberOfSights}
+                    onChangeText={handleChange('end time')}
+                    onBlur={handleBlur('end time')}
+                    value={values.endTime}
                 />
                 {errors.numberOfSights &&
-                    <Text style={styles.errorText}>Number of sights must be provided</Text>
+                    <Text style={styles.errorText}>End time must be provided</Text>
                 }
                 <Button 
                     onPress={handleSubmit} 
@@ -79,11 +85,10 @@ export default RouteForm =() => {
 }
 
 const styles = StyleSheet.create({
-
     loginContainer: {
       width: '100%',
       alignItems: 'center',
-      padding: 10,
+      padding: 20,
       elevation: 10,
       backgroundColor: '#e6e6e6'
     },
@@ -91,6 +96,7 @@ const styles = StyleSheet.create({
       height: 40,
       width: '100%',
       margin: 10,
+      marginBottom: 15,
       padding: 10,
       backgroundColor: 'white',
       borderColor: 'gray',
@@ -101,6 +107,29 @@ const styles = StyleSheet.create({
         fontSize: 10,
         color: 'red',
         margin: 7.5,
+        marginBottom: 15,
+    },
+    text: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        alignSelf: 'left',
+        marginLeft: 5,
+        color: "dimgray",
+    }
+  })
+
+  const pickerStyles = StyleSheet.create({
+    inputIOS: {
+        fontSize: 13,
+        padding: 7,
+        borderWidth: 1,
+        borderColor: "gray",
+        borderRadius: 10,
+        backgroundColor: "white",
+        color: "black",
+        height: 40,
+        width: "100%",
+        marginTop: 10,
         marginBottom: 15,
     }
   })
