@@ -21,13 +21,13 @@ function MainTabNavigator() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" color={color} size={size} />
           ),
-          headerRight: () => (
-            <Button
-              onPress={handleSignOut}
-              title="Logout"
-              color="#e74c3c"
-            />
-          ),
+          // headerRight: () => (
+          //   <Button
+          //     onPress={handleSignOut}
+          //     title="Logout"
+          //     color="#e74c3c"
+          //   />
+          // ),
         }} 
       />
       <Tab.Screen 
@@ -37,13 +37,13 @@ function MainTabNavigator() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="map" color={color} size={size} />
           ),
-          headerRight: () => (
-            <Button
-              onPress={handleSignOut}
-              title="Logout"
-              color="#e74c3c"
-            />
-          ),
+          // headerRight: () => (
+          //   <Button
+          //     onPress={handleSignOut}
+          //     title="Logout"
+          //     color="#e74c3c"
+          //   />
+          // ),
         }} 
       />
       <Tab.Screen 
@@ -53,13 +53,13 @@ function MainTabNavigator() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person" color={color} size={size} />
           ),
-          headerRight: () => (
-            <Button
-              onPress={handleSignOut}
-              title="Logout"
-              color="#e74c3c"
-            />
-          ),
+          // headerRight: () => (
+          //   <Button
+          //     onPress={handleSignOut}
+          //     title="Logout"
+          //     color="#e74c3c"
+          //   />
+          // ),
         }}
       />
     </Tab.Navigator>
