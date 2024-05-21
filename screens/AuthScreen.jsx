@@ -8,24 +8,26 @@ export default function AuthScreen({ navigation }) {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
-  // const [message, setMessage] = useState('');
+
+  const navigate = () => {
+    navigation.navigate("Sign Up")
+  }
 
   const handleSignUp = async () => {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      // setMessage('User registered successfully!');
+      console.log('success', email);
     } catch (error) {
-      setMessage(error.message);
+      console.log('error');
     }
   };
 
   const handleSignIn = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      // setMessage('User signed in successfully!');
+      console.log('success', email);
     } catch (error) {
-      setMessage(error.message);
+      console.log('error');
     }
   };
 
@@ -49,10 +51,9 @@ export default function AuthScreen({ navigation }) {
       <TouchableOpacity style={styles.button} onPress={handleSignIn}>
         <Text style={styles.buttonText}>Sign In</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+      <TouchableOpacity style={styles.button} onPress={navigate}>
         <Text style={styles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
-      {message ? <Text style={styles.message}>{message}</Text> : null}
     </View>
   );
 }
@@ -65,14 +66,15 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   input: {
-    height: 50,
+    height: 55,
     width: '90%',
     borderColor: 'gray',
     borderWidth: 1,
     marginBottom: 10,
     marginTop: 15,
-    paddingHorizontal: 8,
+    paddingLeft: 10,
     borderRadius: 10,
+    fontSize: 17,
   },
   message: {
     marginTop: 20,
@@ -90,6 +92,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontWeight: 'bold',
-    fontSize: 16
+    fontSize: 17
   }
 });
