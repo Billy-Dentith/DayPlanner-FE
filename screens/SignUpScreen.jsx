@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, TextInput, ScrollView, TouchableOpacity } from 
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from 'expo-image-picker';
 import { createUserWithEmailAndPassword } from "@firebase/auth";
+import { getAllUsers } from "../api";
 
 export default function SignUpScreen({ navigation }) {
   const [username, setUsername] = useState('');
@@ -29,8 +30,6 @@ export default function SignUpScreen({ navigation }) {
     }
 
     try {
-      // getAllUsers() from database 
-      /*
       const users = await getAllUsers();
       const usernames = users.map((user) => user.username);
 
@@ -38,7 +37,6 @@ export default function SignUpScreen({ navigation }) {
         setUsernameError('Sorry, this username is taken. Please choose another.');
         return;
       }
-      */
 
       if (password !== confirmPassword) {
         setPasswordError('Both passwords must match');
@@ -50,8 +48,9 @@ export default function SignUpScreen({ navigation }) {
       setErrorMessage('')
 
       try {
-        const userCred = await createUserWithEmailAndPassword(auth, email, password);
-        const username = userCred.user.username;
+        // const userCred = await createUserWithEmailAndPassword(auth, email, password);
+        // console.log(userCred);
+        // const username = userCred.user.username;
 
         /* 
         await postUser({
