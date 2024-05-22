@@ -1,6 +1,5 @@
-import React, { createContext, useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
     apiKey: 'AIzaSyDYlf6ZGcQs8icXCLOzk4_JWvCwJILZosE',
@@ -12,35 +11,5 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+
 export const auth = getAuth(app);
-
-export const AuthContext = createContext();
-
-export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-  
-    useEffect(() => {
-      const unsubscribe = onAuthStateChanged(auth, (user) => {
-        setUser(user);
-        // get user from database and setUser() as database user - currently using firebase user
-      });
-  
-      return () => unsubscribe();
-    }, []);
-
-    const handleSignOut = async () => {
-        try {
-          await signOut(auth);
-          console.log('User logged out successfully!');
-          setUser(null);
-        } catch (error) {
-          console.error('Sign out error:', error.message);
-        }
-      };
-
-    return (
-        <AuthContext.Provider value={{ user, setUser, handleSignOut }}>
-          {children}
-        </AuthContext.Provider>
-    );
-}

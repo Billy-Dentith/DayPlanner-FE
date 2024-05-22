@@ -8,7 +8,8 @@ import {
   } from "react-native";
 import React, { useContext, useState } from "react";
 import pug from "../assets/pug.jpg";
-import { AuthContext, auth } from "../firebase/firebase";
+import { auth } from "../firebase/firebase";
+import { AuthContext } from "../context/AuthContext";
 
 export default function Profile() {
   const [message, setMessage] = useState('');
