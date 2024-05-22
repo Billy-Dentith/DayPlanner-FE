@@ -3,32 +3,35 @@ import { View, Text, TextInput, Button, StyleSheet } from "react-native";
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import RNPickerSelect from 'react-native-picker-select'
+import InterestsSelector from "./InterestsSelector";
 
 const validationSchema = Yup.object().shape({
     city: Yup
         .string()
         .required('City is required'),
-    startTime: Yup
-        .string()
-        .required('Start time is required'),
-    endTime: Yup
-        .number()
-        .required('End time is required')
+    // startTime: Yup
+    //     .number()
+    //     .required('Start time is required'),
+    // endTime: Yup
+    //     .number()
+    //     .required('End time is required')
 })
 
 export default RouteForm =() => {
     const [selectedCity, setSelectedCity] = useState();
+    const [selectedInterests, setSelectedInterests] = useState([]);
 
     return (
         <Formik
             initialValues={{ 
                 city: '',  
-                startTime: '', 
-                endTime: ''
+                // startTime: '', 
+                // endTime: ''
             }}
             validationSchema={validationSchema}
             onSubmit={(values) => {
                 console.log(values)
+                console.log(selectedInterests);
             }}
         >
         {({ handleChange, handleBlur, handleSubmit, values, errors, isValid }) => (
@@ -49,7 +52,7 @@ export default RouteForm =() => {
                 {errors.city &&
                     <Text style={styles.errorText}>City must be provided</Text>
                 }
-                <Text style={styles.text}>Start Time:</Text>
+                {/* <Text style={styles.text}>Start Time:</Text>
                 <TextInput
                     name='start time'
                     placeholder="Start Time"
@@ -72,7 +75,8 @@ export default RouteForm =() => {
                 />
                 {errors.numberOfSights &&
                     <Text style={styles.errorText}>End time must be provided</Text>
-                }
+                } */}
+                <InterestsSelector selectedInterests={selectedInterests} setSelectedInterests={setSelectedInterests}></InterestsSelector>
                 <Button 
                     onPress={handleSubmit} 
                     title="Submit"
