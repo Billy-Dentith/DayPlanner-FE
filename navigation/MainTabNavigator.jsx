@@ -6,11 +6,11 @@ import DayPlanner from '../screens/DayPlanner';
 import Profile from '../screens/Profile';
 import { Ionicons } from '@expo/vector-icons'
 import { AuthContext } from '../firebase/firebase';
+import ProfileNavigator from './ProfileNavigator';
 
 const Tab = createBottomTabNavigator();
 
 function MainTabNavigator() {
-  const { handleSignOut } = useContext(AuthContext)
 
   return (
     <Tab.Navigator>
@@ -20,14 +20,7 @@ function MainTabNavigator() {
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" color={color} size={size} />
-          ),
-          // headerRight: () => (
-          //   <Button
-          //     onPress={handleSignOut}
-          //     title="Logout"
-          //     color="#e74c3c"
-          //   />
-          // ),
+          )
         }} 
       />
       <Tab.Screen 
@@ -36,30 +29,17 @@ function MainTabNavigator() {
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="map" color={color} size={size} />
-          ),
-          // headerRight: () => (
-          //   <Button
-          //     onPress={handleSignOut}
-          //     title="Logout"
-          //     color="#e74c3c"
-          //   />
-          // ),
+          )
         }} 
       />
       <Tab.Screen 
         name="Profile" 
-        component={Profile} 
+        component={ProfileNavigator} 
         options={{
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person" color={color} size={size} />
-          ),
-          // headerRight: () => (
-          //   <Button
-          //     onPress={handleSignOut}
-          //     title="Logout"
-          //     color="#e74c3c"
-          //   />
-          // ),
+          )
         }}
       />
     </Tab.Navigator>
