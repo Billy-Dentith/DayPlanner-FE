@@ -6,34 +6,70 @@ import { createUserWithEmailAndPassword } from "@firebase/auth";
 
 export default function SignUpScreen({ navigation }) {
   const [username, setUsername] = useState('');
+  const [usernameError, setUsernameError] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState();
-  const [confirmPassword, setConfirmPassword] = useState();
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const [avatar, setAvatar] = useState(null);
-  const [errMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
 
 
   function navigate() {
     navigation.navigate("Sign In")
   }
 
-  const validateForm = () => {
+  const handleSignUp = async () => {
     const formInputs = [name, email, password, confirmPassword];
-    const passwordsMatch = password === confirmPassword;
 
     if (formInputs.includes("") || formInputs.includes(undefined)) {
       setErrorMessage("Please fill in all fields");
+      return;
     }
 
-    if (!passwordsMatch) {
-      setErrorMessage("Passwords do not match")
-    }
+    try {
+      // getAllUsers() from database 
+      /*
+      const users = await getAllUsers();
+      const usernames = users.map((user) => user.username);
 
-    if (passwordsMatch) {
-      createUserWithEmailAndPassword(auth, email, password).then(() => {
-        addUserToDatabase()
-      })
+      if (usernames.includes(username)) {
+        setUsernameError('Sorry, this username is taken. Please choose another.');
+        return;
+      }
+      */
+
+      if (password !== confirmPassword) {
+        setPasswordError('Both passwords must match');
+        return;
+      }
+
+      setPasswordError('')
+      setUsernameError('')
+      setErrorMessage('')
+
+      try {
+        const userCred = await createUserWithEmailAndPassword(auth, email, password);
+        const username = userCred.user.username;
+
+        /* 
+        await postUser({
+          username: username,
+          name: name,
+          emailAddress: email,
+          etc...
+        })
+        */
+
+        // setUser(username)
+        // Set user using Mongo users database - currently using firebase user database
+
+      } catch (error) {
+        console.log(error.message);
+      }
+    } catch (error) {
+      console.log(`Failed to get users: ${error.message}`)
     }
   }
 
@@ -45,7 +81,7 @@ export default function SignUpScreen({ navigation }) {
       quality: 1,
     });
 
-    console.log(result);
+    // console.log(result);
 
     if (!result.canceled) {
       setAvatar(result.assets[0].uri);
@@ -67,21 +103,29 @@ export default function SignUpScreen({ navigation }) {
         </Text>
         <View style={styles.FormView}>
           <TextInput
-            onChangeText={setName}
+            onChangeText={(text) => {setName(text); setErrorMessage('')}}
             value={name}
             placeholder={"Full Name*"}
             placeholderTextColor={"white"}
             style={styles.TextInput}
           />
           <TextInput
-            onChangeText={setEmail}
+            onChangeText={(text) => {setUsername(text); setErrorMessage('')}}
+            value={username}
+            placeholder={"Username*"}
+            placeholderTextColor={"white"}
+            style={styles.TextInput}
+          />
+          {usernameError ? <Text style={styles.error}>{usernameError}</Text> : null}
+          <TextInput
+            onChangeText={(text) => {setEmail(text); setErrorMessage('')}}
             placeholder={"Email Address*"}
             value={email}
             placeholderTextColor={"white"}
             style={styles.TextInput}
           />
           <TextInput
-            onChangeText={setPassword}
+            onChangeText={(text) => {setPassword(text); setErrorMessage(''); setPasswordError('')}}
             placeholder={"Password*"}
             value={password}
             secureTextEntry={true}
@@ -89,13 +133,14 @@ export default function SignUpScreen({ navigation }) {
             style={styles.TextInput}
           />
           <TextInput
-            onChangeText={setConfirmPassword}
+            onChangeText={(text) => {setConfirmPassword(text); setErrorMessage(''); setPasswordError('')}}
             placeholder={"Confirm Password*"}
             value={confirmPassword}
             secureTextEntry={true}
             placeholderTextColor={"white"}
             style={styles.TextInput}
           />
+          {passwordError ? <Text style={styles.error}>{passwordError}</Text> : null}
           <Text style={styles.Text}>Choose a Profile Picture:</Text>
           <TouchableOpacity onPress={pickImage} style={styles.Button}>
             <Text style={styles.ButtonText}>
@@ -110,7 +155,8 @@ export default function SignUpScreen({ navigation }) {
               />
             )}
           </View>
-          <TouchableOpacity onPress={validateForm} style={styles.Button}>
+          {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
+          <TouchableOpacity onPress={handleSignUp} style={styles.Button}>
             <Text style={styles.ButtonText}>Sign Up</Text>
           </TouchableOpacity>
         </View>
@@ -190,5 +236,11 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     borderColor: 'dimgray',
     borderWidth: 5,
+  },
+  error: {
+    color: 'red',
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginTop: 10,
   }
 });

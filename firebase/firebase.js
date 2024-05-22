@@ -22,6 +22,7 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
       const unsubscribe = onAuthStateChanged(auth, (user) => {
         setUser(user);
+        // get user from database and setUser() as database user - currently using firebase user
       });
   
       return () => unsubscribe();
