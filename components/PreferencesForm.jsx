@@ -1,32 +1,22 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, StyleSheet, TouchableOpacity } from "react-native";
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import RNPickerSelect from 'react-native-picker-select'
 import InterestsSelector from "./InterestsSelector";
 
 const validationSchema = Yup.object().shape({
-    city: Yup
+    radius: Yup
         .string()
-        .required('City is required'),
-    // startTime: Yup
-    //     .number()
-    //     .required('Start time is required'),
-    // endTime: Yup
-    //     .number()
-    //     .required('End time is required')
+        .required('Radius is required'),
 })
 
 export default RouteForm =() => {
-    const [selectedCity, setSelectedCity] = useState();
     const [selectedInterests, setSelectedInterests] = useState([]);
 
     return (
         <Formik
-            initialValues={{ 
-                city: '',  
-                // startTime: '', 
-                // endTime: ''
+            initialValues={{  
             }}
             validationSchema={validationSchema}
             onSubmit={(values) => {
@@ -35,48 +25,28 @@ export default RouteForm =() => {
             }}
         >
         {({ handleChange, handleBlur, handleSubmit, values, errors, isValid }) => (
-            <View style={styles.loginContainer}>
-                <Text style={styles.text}>City:</Text>
+            <View style={styles.container}>
+                <Text style={styles.text}>Search Radius</Text>
                 <RNPickerSelect
                     style={{...pickerStyles}}
-                    onValueChange={handleChange('city')}
-                    onBlur={handleChange('city')}
+                    onValueChange={handleChange('radius')}
+                    onBlur={handleChange('radius')}
+                    placeholder={{}}
                     items={[
-                        { label: 'London', value: 'england'},
-                        { label: 'Manchester', value: 'manchester'},
-                        { label: 'Birmingham', value: 'birmingham'},
-                        { label: 'Liverpool', value: 'liverpool'},
+                        { label: '100 Meters', value: '100'},
+                        { label: '200 Meters', value: '200'},
+                        { label: '300 Meters', value: '300'},
+                        { label: '400 Meters', value: '400'},
+                        { label: '500 Meters', value: '500'},
+                        { label: '600 Meters', value: '600'},
+                        { label: '700 Meters', value: '700'},
+                        { label: '800 Meters', value: '800'},
+                        { label: '900 Meters', value: '900'},
+                        { label: '1 Kilometer', value: '1000'},
                     ]}
-                    value={values.city}
+                    value={values.radius}
                 />
-                {errors.city &&
-                    <Text style={styles.errorText}>City must be provided</Text>
-                }
-                {/* <Text style={styles.text}>Start Time:</Text>
-                <TextInput
-                    name='start time'
-                    placeholder="Start Time"
-                    style={styles.textInput}
-                    onChangeText={handleChange('start time')}
-                    onBlur={handleBlur('start time')}
-                    value={values.startTime}
-                />
-                {errors.end &&
-                    <Text style={styles.errorText}>Start time must be provided</Text>
-                }
-                <Text style={styles.text}>End Time:</Text>
-                <TextInput
-                    name='end time'
-                    placeholder="End Time"
-                    style={styles.textInput}
-                    onChangeText={handleChange('end time')}
-                    onBlur={handleBlur('end time')}
-                    value={values.endTime}
-                />
-                {errors.numberOfSights &&
-                    <Text style={styles.errorText}>End time must be provided</Text>
-                } */}
-                <Text style={styles.text}>Interests:</Text>
+                <Text style={styles.text}>Interests</Text>
                 <InterestsSelector selectedInterests={selectedInterests} setSelectedInterests={setSelectedInterests}></InterestsSelector>
                 <TouchableOpacity 
                     style={styles.button}
@@ -93,7 +63,7 @@ export default RouteForm =() => {
 }
 
 const styles = StyleSheet.create({
-    loginContainer: {
+    container: {
       width: '100%',
       alignItems: 'center',
       padding: 20,
@@ -131,7 +101,7 @@ const styles = StyleSheet.create({
         padding: 15,
         borderRadius: 10,
         alignItems: "center",
-        marginTop: 10,
+        marginTop: 5,
         marginBottom: 0,
       },
       buttonText: {
