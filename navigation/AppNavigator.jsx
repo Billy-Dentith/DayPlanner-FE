@@ -3,7 +3,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import AuthNavigator from './AuthNavigator';
 import MainTabNavigator from './MainTabNavigator';
 import { onAuthStateChanged } from '@firebase/auth';
-import { AuthContext, auth } from '../firebase/firebase';
+import { auth } from '../firebase/firebase';
+import { AuthContext } from '../context/AuthContext';
 
 const Stack = createStackNavigator();
 

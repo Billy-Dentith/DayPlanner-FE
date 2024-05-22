@@ -1,11 +1,9 @@
 import React, { useContext, useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { AuthContext, auth } from '../firebase/firebase';
+import { auth } from '../firebase/firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from '@firebase/auth'; 
 
 export default function AuthScreen({ navigation }) {
-  const { setUser } = useContext(AuthContext)
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 

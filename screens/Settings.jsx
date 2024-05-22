@@ -4,12 +4,11 @@ import {
     ScrollView,
   } from "react-native";
 import React, { useContext, useState } from "react";
-import { AuthContext, auth } from "../firebase/firebase";
+import { auth } from "../firebase/firebase";
 import PreferencesForm from "../components/PreferencesForm";
 import SettingsForm from "../components/SettingsForm";
 
 export default function SettingsScreen() {
-    const { user } = useContext(AuthContext);
 
     return (
         <ScrollView>
