@@ -6,16 +6,21 @@ import {
     Image,
     TouchableOpacity,
   } from "react-native";
-import React, { useContext, useState } from "react";
-import pug from "../assets/pug.jpg";
+import React, { useContext, useEffect, useState } from "react";
 import { auth } from "../firebase/firebase";
 import { AuthContext } from "../context/AuthContext";
+import { getUserByUsername } from "../api";
 
 export default function Profile() {
   const [message, setMessage] = useState('');
+  const [userDB, setUserDB] = useState({});
   const { handleSignOut, user } = useContext(AuthContext);
 
-  // console.log(user.uid, user.email);
+  useEffect(() => {
+    getUserByUsername(user.displayName).then((res) => {
+      setUserDB(res);
+    })
+  }, [])
   
   return (
     <ScrollView>
@@ -30,7 +35,7 @@ export default function Profile() {
               borderWidth: 7,
               marginBottom: 20,
             }}
-            source={pug}
+            source={{ uri: userDB.avatar }}
           />
         </View>
       </View>
@@ -38,19 +43,15 @@ export default function Profile() {
         <Text style={styles.textTitle}>User Information</Text>
         <Text style={styles.text}>
           Name:{"  "}
-          <Text style={styles.line}>Pugston</Text>
-        </Text>
-        <Text style={styles.text}>
-          Age:{"  "}
-          <Text style={styles.line}>10</Text>
+          <Text style={styles.line}>Billy</Text>
         </Text>
         <Text style={styles.text}>
           Username:{"  "}
-          <Text style={styles.line}>@MrPugston</Text>
+          <Text style={styles.line}>{userDB.username}</Text>
         </Text>
         <Text style={styles.text}>
           Location:{"  "}
-          <Text style={styles.line}>Barcelona</Text>
+          <Text style={styles.line}>London</Text>
         </Text>
       </View>
       <View style={styles.container}>
