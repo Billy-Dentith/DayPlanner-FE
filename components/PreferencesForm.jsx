@@ -3,7 +3,8 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity } from "react-nativ
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import RNPickerSelect from 'react-native-picker-select'
-import InterestsSelector from "./InterestsSelector";
+import InterestsFilter from "./InterestsFilter";
+import { initialFilter } from "../data/Interests";
 
 const validationSchema = Yup.object().shape({
     radius: Yup
@@ -12,7 +13,7 @@ const validationSchema = Yup.object().shape({
 })
 
 export default RouteForm =() => {
-    const [selectedInterests, setSelectedInterests] = useState([]);
+    const [filter, setFilter] = useState(initialFilter);
 
     return (
         <Formik
@@ -21,7 +22,7 @@ export default RouteForm =() => {
             validationSchema={validationSchema}
             onSubmit={(values) => {
                 console.log(values)
-                console.log(selectedInterests);
+                console.log(filter);
             }}
         >
         {({ handleChange, handleBlur, handleSubmit, values, errors, isValid }) => (
@@ -47,7 +48,7 @@ export default RouteForm =() => {
                     value={values.radius}
                 />
                 <Text style={styles.text}>Interests</Text>
-                <InterestsSelector selectedInterests={selectedInterests} setSelectedInterests={setSelectedInterests}></InterestsSelector>
+                <InterestsFilter filter={filter} setFilter={setFilter}></InterestsFilter>
                 <TouchableOpacity 
                     style={styles.button}
                     onPress={handleSubmit} 

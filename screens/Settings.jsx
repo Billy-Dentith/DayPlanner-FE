@@ -7,6 +7,7 @@ import React, { useContext, useState } from "react";
 import { auth } from "../firebase/firebase";
 import PreferencesForm from "../components/PreferencesForm";
 import SettingsForm from "../components/SettingsForm";
+import InterestsFilter from "../components/InterestsFilter";
 
 export default function SettingsScreen() {
 
