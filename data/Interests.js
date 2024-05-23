@@ -1,17 +1,13 @@
-const filter = {
+export const initialFilter = {
     amenity: {
-      food: {
-        cafe: true,
-        food_court: true,
-        restaurant: true,
-      },
-      entertainment: {
-        arts_centre: true,
-        casino: true,
-        cinema: true,
-        planetarium: true,
-        theatre: true,
-      },
+      cafe: true,
+      food_court: true,
+      restaurant: true,
+      arts_centre: true,
+      casino: true,
+      cinema: true,
+      planetarium: true,
+      theatre: true,
     },
     historic: {
       castle: true,
