@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useState, useEffect, useRef } from "react";
 import {
   Platform,
@@ -14,32 +14,36 @@ import MapView from 'react-native-maps'
 // import MapViewDirections from 'react-native-maps-directions';
 import * as Location from "expo-location";
 import mapStyle from "../styles/mapStyle";
-import { MARKERS_DATA } from "../data";
+// import { MARKERS_DATA } from "../data";
+import { getAllSights } from "../api";
+import { AuthContext } from '../context/AuthContext'
 
 const { height } = Dimensions.get("window");
 const { width } = Dimensions.get("window");
 
 export default function MapScreen() {
+  const { user } = useContext(AuthContext)
   const mapRef = useRef();
   const [currentLocation, setCurrentLocation] = useState(null);
   const [initialRegion, setInitialRegion] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(null);
-  const [directions, setDirections] = useState([
-    {
-      latitude: 51.51804671105917,
-      longitude: -0.08383278364567782,
-    },
-    {
-      latitude: 51.51353018002063,
-      longitude: -0.13652633647427498,
-    },
-  ]);
+  const [usersSights, setUsersSights] = useState([])
+  // const [directions, setDirections] = useState([
+  //   {
+  //     latitude: 51.51804671105917,
+  //     longitude: -0.08383278364567782,
+  //   },
+  //   {
+  //     latitude: 51.51353018002063,
+  //     longitude: -0.13652633647427498,
+  //   },
+  // ]);
   const [errorMsg, setErrorMsg] = useState(null);
 
   const handleMarkerPress = (coordinate) => {
     mapRef.current.animateToRegion({
-      latitude: coordinate.latitude,
-      longitude: coordinate.longitude,
+      latitude: coordinate.lat,
+      longitude: coordinate.lon,
       latitudeDelta: 0.02,
       longitudeDelta: 0.02,
     });
@@ -65,14 +69,13 @@ export default function MapScreen() {
     };
 
     getLocation();
+
+    // Hardcoded user 
+    getAllSights('JamesO').then((res) => {
+      setUsersSights(res);
+    })
   }, []);
 
-  let text = "Waiting..";
-  if (errorMsg) {
-    text = errorMsg;
-  } else if (currentLocation) {
-    text = JSON.stringify(currentLocation);
-  }
 
   return (
     <View style={styles.container}>
@@ -84,16 +87,16 @@ export default function MapScreen() {
         ref={mapRef}
         initialRegion={initialRegion}
       >
-        {MARKERS_DATA.map((marker) => (
-          <Marker
-            key={marker.id}
+        {usersSights.map((sight) => (
+          <Marker 
+            key={sight.id}
             coordinate={{
-              latitude: marker.latitude,
-              longitude: marker.longitude,
+              latitude: sight.lat,
+              longitude: sight.lon
             }}
             onPress={() => {
-              setSelectedLocation(marker);
-              handleMarkerPress(marker);
+              setSelectedLocation(sight);
+              handleMarkerPress(sight);
             }}
             image={require("../assets/map_marker.png")}
           />
@@ -107,8 +110,8 @@ export default function MapScreen() {
     <Marker coordinate={directions[0]}/>
     <Marker coordinate={directions[1]}/> */}
       </MapView>
-      <FlatList
-        data={MARKERS_DATA}
+      <FlatList 
+        data={usersSights}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <TouchableOpacity
@@ -118,7 +121,7 @@ export default function MapScreen() {
             }}
           >
             <View style={styles.item}>
-              <Text>{item.name}</Text>
+              <Text style={styles.nameCard}>{item.tags.name || 'Local Sight'}</Text>
             </View>
           </TouchableOpacity>
         )}
@@ -126,8 +129,17 @@ export default function MapScreen() {
       />
       {selectedLocation && (
         <View style={styles.detailCard}>
-          <Text style={styles.detailTitle}>{selectedLocation.name}</Text>
-          <Text>{selectedLocation.direction}</Text>
+          <Text style={styles.detailTitle}>{selectedLocation.tags.name}</Text>
+          <View style={styles.address}>
+            {selectedLocation.tags['addr:housenumber'] && 
+              <Text style={styles.text}>{selectedLocation.tags['addr:housenumber']} </Text>}
+            {selectedLocation.tags['addr:street'] && 
+              <Text style={styles.text}>{selectedLocation.tags['addr:street']}</Text>}
+          </View>
+          {selectedLocation.tags.phone && 
+            <Text style={styles.text}>{selectedLocation.tags.phone}</Text>}
+          {selectedLocation.tags.website && 
+            <Text style={styles.text}>{selectedLocation.tags.website}</Text>}
           <TouchableOpacity onPress={() => setSelectedLocation(null)}>
             <Text style={styles.closeButton}>Close</Text>
           </TouchableOpacity>
@@ -165,9 +177,21 @@ const styles = StyleSheet.create({
   detailTitle: {
     fontSize: 18,
     fontWeight: "bold",
+    marginBottom: 2,
+    textTransform: 'capitalize',
   },
   closeButton: {
     marginTop: 10,
     color: "blue",
   },
+  address: {
+    display: 'flex',
+    flexDirection: 'row'
+  },
+  text: {
+    marginVertical: 1
+  },
+  nameCard: {
+    textTransform: 'capitalize',
+  }
 });
