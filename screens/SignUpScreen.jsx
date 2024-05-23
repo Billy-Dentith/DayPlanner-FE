@@ -135,7 +135,7 @@ export default function SignUpScreen({ navigation }) {
             style={styles.TextInput}
           />
           <TextInput
-            onChangeText={(text) => {setUsername(text); setErrorMessage('')}}
+            onChangeText={(text) => {setUsername(text); setErrorMessage(''); setUsernameError('')}}
             value={username}
             placeholder={"Username*"}
             placeholderTextColor={"white"}
