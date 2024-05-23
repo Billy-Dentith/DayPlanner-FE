@@ -1,18 +1,13 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import RNPickerSelect from 'react-native-picker-select'
-import InterestsSelector from "./InterestsSelector";
 
 const validationSchema = Yup.object().shape({
-    radius: Yup
-        .string()
-        .required('Radius is required'),
+    
 })
 
-export default RouteForm =() => {
-    const [selectedInterests, setSelectedInterests] = useState([]);
+export default SettingsForm =() => {
 
     return (
         <Formik
@@ -21,7 +16,6 @@ export default RouteForm =() => {
             validationSchema={validationSchema}
             onSubmit={(values) => {
                 console.log(values)
-                console.log(selectedInterests);
             }}
         >
         {({ handleChange, handleBlur, handleSubmit, values, errors, isValid }) => (
