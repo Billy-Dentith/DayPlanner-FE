@@ -33,7 +33,7 @@ function MainTabNavigator() {
         }} 
       />
       <Tab.Screen 
-        name="Profile" 
+        name="Profile Navigator" 
         component={ProfileNavigator} 
         options={{
           headerShown: false,
