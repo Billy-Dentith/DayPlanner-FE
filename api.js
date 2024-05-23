@@ -46,8 +46,8 @@ export const updateUser = async (avatar, searchRadius, lon, lat) => {
     return response.data;
 }
 
-export const getAllSights = async () => {
-    const response= await dayPlannerApi.get('/sights');
+export const getAllSights = async (username) => {
+    const response= await dayPlannerApi.get(`/sights?username=${username}`);
 
     return response.data; 
 }
