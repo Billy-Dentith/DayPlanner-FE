@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { StyleSheet, View, Text, TextInput, ScrollView, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from 'expo-image-picker';
-import { createUserWithEmailAndPassword } from "@firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "@firebase/auth";
+import { auth } from "../firebase/firebase";
 import { getAllUsers } from "../api";
+import axios from "axios";
 
 export default function SignUpScreen({ navigation }) {
   const [username, setUsername] = useState('');
@@ -64,6 +66,16 @@ export default function SignUpScreen({ navigation }) {
         // setUser(username)
         // Set user using Mongo users database - currently using firebase user database
 
+        // await updateProfile to update user
+
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(userCredential.user, { displayName: username });
+        console.log('User created successfully!');
+
+
+        await postUserToMongo(username);
+
+
       } catch (error) {
         console.log(error.message);
       }
@@ -71,6 +83,20 @@ export default function SignUpScreen({ navigation }) {
       console.log(`Failed to get users: ${error.message}`)
     }
   }
+
+  const postUserToMongo = async (username) => {
+    try {
+      const response = await axios.post('https://dayplanner-yoqm.onrender.com/api/users', {
+        username: username,
+        avatar: 'https://cdn.discordapp.com/embed/avatars/0.png',
+      });
+      
+      console.log('User saved ', response.data);
+      navigate();
+    } catch (error) {
+      console.error('Error saving user', error);
+    }
+  };
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
