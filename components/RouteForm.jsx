@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import RNPickerSelect from 'react-native-picker-select'
 import InterestsSelector from "./InterestsSelector";
+import { initialFilter } from "../data/Interests";
+import InterestsFilter from "./InterestsFilter";
 
 const validationSchema = Yup.object().shape({
     city: Yup
@@ -19,7 +21,7 @@ const validationSchema = Yup.object().shape({
 
 export default RouteForm =() => {
     const [selectedCity, setSelectedCity] = useState();
-    const [selectedInterests, setSelectedInterests] = useState([]);
+    const [dayFilter, setDayFilter] = useState(initialFilter);
 
     return (
         <Formik
@@ -31,18 +33,19 @@ export default RouteForm =() => {
             validationSchema={validationSchema}
             onSubmit={(values) => {
                 console.log(values)
-                console.log(selectedInterests);
+                console.log(dayFilter);
             }}
         >
         {({ handleChange, handleBlur, handleSubmit, values, errors, isValid }) => (
-            <View style={styles.loginContainer}>
+            <ScrollView >
                 <Text style={styles.text}>City:</Text>
                 <RNPickerSelect
                     style={{...pickerStyles}}
                     onValueChange={handleChange('city')}
                     onBlur={handleChange('city')}
+                    placeholder={{}}
                     items={[
-                        { label: 'London', value: 'england'},
+                        { label: 'London', value: 'london'},
                         { label: 'Manchester', value: 'manchester'},
                         { label: 'Birmingham', value: 'birmingham'},
                         { label: 'Liverpool', value: 'liverpool'},
@@ -77,7 +80,7 @@ export default RouteForm =() => {
                     <Text style={styles.errorText}>End time must be provided</Text>
                 } */}
                 <Text style={styles.text}>Interests:</Text>
-                <InterestsSelector selectedInterests={selectedInterests} setSelectedInterests={setSelectedInterests}></InterestsSelector>
+                <InterestsFilter filter={dayFilter} setFilter={setDayFilter}></InterestsFilter>
                 <TouchableOpacity 
                     style={styles.button}
                     onPress={handleSubmit} 
@@ -86,30 +89,28 @@ export default RouteForm =() => {
                 >
                     <Text style={styles.buttonText}>Submit</Text>
                 </TouchableOpacity>
-            </View>
+            </ScrollView>
        )}
         </Formik>
     )
 }
 
 const styles = StyleSheet.create({
-    loginContainer: {
+    container: {
       width: '100%',
-      alignItems: 'center',
       padding: 20,
-      elevation: 10,
     },
-    textInput: {
-      height: 40,
-      width: '100%',
-      margin: 10,
-      marginBottom: 15,
-      padding: 10,
-      backgroundColor: 'white',
-      borderColor: 'gray',
-      borderWidth: StyleSheet.hairlineWidth,
-      borderRadius: 10,
-    },
+    // textInput: {
+    //   height: 40,
+    //   width: '90%',
+    //   margin: 10,
+    //   marginBottom: 15,
+    //   padding: 10,
+    //   backgroundColor: 'white',
+    //   borderColor: 'gray',
+    //   borderWidth: StyleSheet.hairlineWidth,
+    //   borderRadius: 10,
+    // },
     errorText: {
         fontSize: 10,
         color: 'red',
@@ -120,8 +121,8 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         alignSelf: 'left',
-        marginLeft: 5,
-        marginTop: 10,
+        marginLeft: 15,
+        marginTop: 15,
         marginBottom: 10,
         color: "dimgray",
     },
@@ -132,7 +133,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         alignItems: "center",
         marginTop: 10,
-        marginBottom: 0,
+        marginBottom: 25,
+        alignSelf: 'center'
       },
       buttonText: {
         color: "white",
@@ -151,8 +153,9 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         color: "black",
         height: 40,
-        width: "100%",
+        width: "90%",
         marginTop: 10,
         marginBottom: 15,
+        marginHorizontal: 20,
     }
   })
