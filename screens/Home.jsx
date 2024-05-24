@@ -17,17 +17,20 @@ import mapStyle from "../styles/mapStyle";
 // import { MARKERS_DATA } from "../data";
 import { getAllSights } from "../api";
 import { AuthContext } from '../context/AuthContext'
+import { SightsContext } from "../context/SightsContext";
 
 const { height } = Dimensions.get("window");
 const { width } = Dimensions.get("window");
 
 export default function MapScreen() {
   const { user } = useContext(AuthContext)
+  const { usersSights, setUsersSights } = useContext(SightsContext);
   const mapRef = useRef();
   const [currentLocation, setCurrentLocation] = useState(null);
   const [initialRegion, setInitialRegion] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(null);
-  const [usersSights, setUsersSights] = useState([])
+  // const [usersSights, setUsersSights] = useState([])
+  
   // const [directions, setDirections] = useState([
   //   {
   //     latitude: 51.51804671105917,
@@ -71,7 +74,7 @@ export default function MapScreen() {
     getLocation();
 
     // Hardcoded user 
-    getAllSights('JamesO').then((res) => {
+    getAllSights('DwayneA').then((res) => {
       setUsersSights(res);
     })
   }, []);
