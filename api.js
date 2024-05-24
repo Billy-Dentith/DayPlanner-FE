@@ -16,22 +16,24 @@ export const getUserByUsername = async (username) => {
     return response.data;
 }
 
-export const postUser = async (username, searchRadius, lon, lat) => {
+export const postUser = async (name, username, searchRadius, longitude, latitude, userFilter) => {
     const response = await dayPlannerApi.post('/users', {
+        displayName: name,
         username: username,
         settings: {
             searchRadius: searchRadius,
             location: {
-                lon: lon,
-                lat: lat,
+                lon: longitude,
+                lat: latitude,
             }
-        }
+        },
+        filters: userFilter,
     });
 
     return response.data;
 }
 
-export const updateUser = async (avatar, searchRadius, lon, lat) => {
+export const patchUser = async (avatar, searchRadius, lon, lat, userFilter) => {
     const response = await dayPlannerApi.patch(`/user/${username}`, {
         avatar: avatar,
         settings: {
@@ -40,7 +42,8 @@ export const updateUser = async (avatar, searchRadius, lon, lat) => {
                 lon: lon,
                 lat: lat,
             }
-        }
+        },
+        filters: userFilter,
     });
 
     return response.data;
