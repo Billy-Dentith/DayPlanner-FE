@@ -4,8 +4,11 @@ import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from 'expo-image-picker';
 import { createUserWithEmailAndPassword, updateProfile } from "@firebase/auth";
 import { auth } from "../firebase/firebase";
-import { getAllUsers } from "../api";
+import { getAllUsers, postUser } from "../api";
 import axios from "axios";
+import { initialFilter } from "../data/Interests";
+import InterestsFilter from "../components/InterestsFilter";
+import RNPickerSelect from 'react-native-picker-select'
 
 export default function SignUpScreen({ navigation }) {
   const [username, setUsername] = useState('');
@@ -16,6 +19,8 @@ export default function SignUpScreen({ navigation }) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [avatar, setAvatar] = useState(null);
+  const [userInterestsFilter, setUserInterestsFilter] = useState(initialFilter);
+  const [searchRadius, setSearchRadius] = useState(500)
   const [errorMessage, setErrorMessage] = useState('');
 
 
@@ -50,31 +55,12 @@ export default function SignUpScreen({ navigation }) {
       setErrorMessage('')
 
       try {
-        // const userCred = await createUserWithEmailAndPassword(auth, email, password);
-        // console.log(userCred);
-        // const username = userCred.user.username;
-
-        /* 
-        await postUser({
-          username: username,
-          name: name,
-          emailAddress: email,
-          etc...
-        })
-        */
-
-        // setUser(username)
-        // Set user using Mongo users database - currently using firebase user database
-
-        // await updateProfile to update user
-
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         await updateProfile(userCredential.user, { displayName: username });
         console.log('User created successfully!');
 
-
-        await postUserToMongo(username);
-
+        // Hardcoded lon lat
+        await postUser(name, username, searchRadius, -0.140634, 51.501476, userInterestsFilter)
 
       } catch (error) {
         console.log(error.message);
@@ -83,20 +69,6 @@ export default function SignUpScreen({ navigation }) {
       console.log(`Failed to get users: ${error.message}`)
     }
   }
-
-  const postUserToMongo = async (username) => {
-    try {
-      const response = await axios.post('https://dayplanner-yoqm.onrender.com/api/users', {
-        username: username,
-        avatar: 'https://cdn.discordapp.com/embed/avatars/0.png',
-      });
-      
-      console.log('User saved ', response.data);
-      navigate();
-    } catch (error) {
-      console.error('Error saving user', error);
-    }
-  };
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -114,19 +86,19 @@ export default function SignUpScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
         <Ionicons
           onPress={navigate}
-          style={styles.Icon}
+          style={styles.icon}
           name="arrow-back-circle-outline"
           color={"white"}
           size={60}
         />
-        <Text style={styles.Heading}>
+        <Text style={styles.heading}>
           Create your{"\n"}
           account
         </Text>
-        <View style={styles.FormView}>
+        <View style={styles.formView}>
           <TextInput
             onChangeText={(text) => {setName(text); setErrorMessage('')}}
             value={name}
@@ -166,39 +138,63 @@ export default function SignUpScreen({ navigation }) {
             style={styles.TextInput}
           />
           {passwordError ? <Text style={styles.error}>{passwordError}</Text> : null}
-          <Text style={styles.Text}>Choose a Profile Picture:</Text>
-          <TouchableOpacity onPress={pickImage} style={styles.Button}>
-            <Text style={styles.ButtonText}>
-              Choose from Camera Roll
+          <Text style={styles.text}>Choose a profile picture:</Text>
+          <TouchableOpacity onPress={pickImage} style={styles.button}>
+            <Text style={styles.buttonText}>
+              Choose from camera roll
             </Text>
           </TouchableOpacity>
-          <View style={styles.container}>
-            {avatar && (
-              <Image
-                source={{ uri: avatar }}
-                style={styles.image}
-              />
-            )}
+          {avatar && (
+            <View style={styles.container}>
+                <Image
+                  source={{ uri: avatar }}
+                  style={styles.image}
+                />
+            </View>
+          )}
+          <Text style={styles.text}>Choose your interests:</Text>
+          <View style={styles.interestsContainer}>
+            <InterestsFilter filter={userInterestsFilter} setFilter={setUserInterestsFilter}></InterestsFilter>
           </View>
+          <Text style={styles.text}>Choose your search radius:</Text>
+          <RNPickerSelect
+            style={{...pickerStyles}}
+            onValueChange={value => setSearchRadius(value)}
+            placeholder={{}}
+            items={[
+                { label: '500 Meters', value: '500'},
+                { label: '600 Meters', value: '600'},
+                { label: '700 Meters', value: '700'},
+                { label: '800 Meters', value: '800'},
+                { label: '900 Meters', value: '900'},
+                { label: '1000 Meters', value: '1000'},
+                { label: '1100 Meters', value: '1100'},
+                { label: '1200 Meters', value: '1200'},
+                { label: '1300 Meters', value: '1300'},
+                { label: '1400 Meter', value: '1400'},
+                { label: '1500 Meter', value: '1500'},
+                { label: '1600 Meter', value: '1600'},
+            ]}
+          />
           {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
-          <TouchableOpacity onPress={handleSignUp} style={styles.Button}>
-            <Text style={styles.ButtonText}>Sign Up</Text>
+          <TouchableOpacity onPress={handleSignUp} style={styles.button}>
+            <Text style={styles.buttonText}>Sign Up</Text>
           </TouchableOpacity>
         </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: 'lightblue',
-    width: '100%',
-    height: '100%',
+    paddingTop: 100,
+    paddingBottom: 100,
   },
-  Heading: {
+  heading: {
     color: "white",
     fontSize: 40,
     fontWeight: "bold",
@@ -206,12 +202,15 @@ const styles = StyleSheet.create({
     marginTop: 5,
     alignSelf: 'left',
   },
-  FormView: {
+  formView: {
     width: "100%",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     marginTop: 10,
+  },
+  interestsContainer: {
+    paddingHorizontal: 10,
   },
   TextInput: {
     width: "90%",
@@ -224,7 +223,7 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 17
   },
-  Button: {
+  button: {
     width: "90%",
     height: 55,
     backgroundColor: "white",
@@ -235,19 +234,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  ButtonText: {
+  buttonText: {
     fontWeight: "bold",
     color: "dimgray",
     fontSize: 17,
   },
-  Icon: {
+  icon: {
     marginLeft: 30,
     marginBottom: 20,
     alignSelf: 'left',
   },
-  Text: {
+  text: {
     fontWeight: "normal",
-    fontSize: 17,
+    fontSize: 20,
     fontWeight: 'bold',
     color: "white",
     marginTop: 30,
@@ -269,3 +268,20 @@ const styles = StyleSheet.create({
     marginTop: 10,
   }
 });
+
+const pickerStyles = StyleSheet.create({
+  inputIOS: {
+      fontSize: 13,
+      padding: 7,
+      borderWidth: 1,
+      borderColor: "gray",
+      borderRadius: 10,
+      backgroundColor: "white",
+      color: "black",
+      height: 40,
+      width: "90%",
+      alignSelf: 'center',
+      marginTop: 10,
+      marginBottom: 50,
+  }
+})

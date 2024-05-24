@@ -32,7 +32,10 @@ export default InterestsFilter = ({filter, setFilter}) => {
           onPress={() => handleToggle(category, item)}
         >
           <Text
-            style={styles.optionText}
+            style={[
+              styles.optionText,
+              filter[category][item] && styles.selectedOptionText,
+            ]}
           >
             {item.replace('_', ' ')}
           </Text>
@@ -42,7 +45,7 @@ export default InterestsFilter = ({filter, setFilter}) => {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       {Object.keys(filter).map((category, index) => (
         <View key={index}>
           <Text style={styles.categoryHeader}>{category}</Text>
@@ -51,13 +54,12 @@ export default InterestsFilter = ({filter, setFilter}) => {
           </View>
         </View>
       ))}
-    </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 20,
   },
   categoryContainer: {
@@ -71,7 +73,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 10,
-    color: 'dimgray',
+    color: 'white',
     textTransform: 'capitalize',
   },
   switchContainer: {
@@ -79,7 +81,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   option: {
-    backgroundColor: '#e6e6e6',
+    backgroundColor: 'lightblue',
+    borderWidth: 2,
+    borderColor: 'white',
     borderRadius: 20,
     paddingVertical: 10,
     paddingHorizontal: 15,
@@ -88,12 +92,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   selectedOption: {
-    backgroundColor: 'lightblue',
+    backgroundColor: 'white',
   },
   optionText: {
-    color: '#333',
-    fontSize: 16,
+    color: 'white',
+    fontSize: 18,
     textTransform: 'capitalize'
   },
+  selectedOptionText: {
+    color: 'dimgray',
+  }
 });
-
