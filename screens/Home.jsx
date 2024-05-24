@@ -74,7 +74,7 @@ export default function MapScreen() {
     getLocation();
 
     // Hardcoded user 
-    getAllSights('DwayneA').then((res) => {
+    getAllSights('JamesO').then((res) => {
       setUsersSights(res);
     })
   }, []);
