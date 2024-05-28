@@ -14,7 +14,7 @@ import { getUserByUsername } from "../api";
 export default function Profile() {
   const [message, setMessage] = useState('');
   const [userDB, setUserDB] = useState({});
-  const { handleSignOut, user } = useContext(AuthContext);
+  const { handleSignOut, user, avatar } = useContext(AuthContext);
 
   useEffect(() => {
     getUserByUsername(user.displayName).then((res) => {
@@ -35,7 +35,7 @@ export default function Profile() {
               borderWidth: 7,
               marginBottom: 20,
             }}
-            source={{ uri: userDB.avatar }}
+            source={{ uri: avatar }}
           />
         </View>
       </View>
