@@ -5,12 +5,13 @@ import { SightsContext } from "../context/SightsContext";
 import SightItem from '../components/SightItem'
 import { getRoute } from "../api";
 import { AuthContext } from "../context/AuthContext";
+import MapRoute from "../components/MapComponent";
 
 const RoutePlanner = () => {
   const { user } = useContext(AuthContext);
   const { usersSights, setUsersSights } = useContext(SightsContext);
-  // const [selectedSights, setSelectedSights] = useState([]);
-  const [routeCoords, setRouteCoords] = useState(null);
+  const [selectedSights, setSelectedSights] = useState([]);
+  const [routeCoords, setRouteCoords] = useState();
   const [sightsFilter, setSightsFilter] = useState(
     usersSights.reduce((obj, sight) => {
       obj[sight.id] = false;
@@ -34,13 +35,26 @@ const RoutePlanner = () => {
       }
     });
     
-    // setSelectedSights(sightsArr);
+    setSelectedSights(sightsArr);
 
     getRoute(user.displayName, sightsArr).then((res) => {
       setRouteCoords(res);
     })
   };
   
+  if (routeCoords) {
+    return (
+      <View style={styles.container}>
+        <MapRoute routeCoords={routeCoords} selectedSights={selectedSights}></MapRoute>
+        <TouchableOpacity
+        style={styles.endButton}
+          onPress={() => setRouteCoords()}
+        >
+          <Text style={styles.endButtonText}>Clear</Text>
+        </TouchableOpacity>
+      </View>
+    )
+  } else {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Choose from the below sights to start planning your route:</Text>
@@ -83,14 +97,12 @@ const RoutePlanner = () => {
         <Text style={styles.buttonText}>Submit</Text>
       </TouchableOpacity>
     </View>
-  );
+  )}
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    padding: 20,
-    marginBottom: 100,
+    flex: 1
   },
   item: {
     padding: 20,
@@ -150,15 +162,35 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     alignItems: 'center',
     marginTop: 25,
-    marginBottom: 0,
+    marginBottom: 20,
   },
   buttonText: {
     color: "white",
     fontWeight: "700",
     fontSize: 16,
   }, 
+  endButton: {
+    backgroundColor: "white",
+    width: "90%",
+    padding: 8,
+    alignSelf: "center",
+    alignItems: 'center',
+    marginTop: 10,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
+    fontWeight: 'bold'
+  },
+  endButtonText: {
+    fontSize: 16,
+  },
   list: {
-    height: '90%'
+    height: '90%',
+    width: '95%',
+    alignSelf: 'center',
   }
 })
 
