@@ -10,38 +10,34 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Marker, Polyline, Polygon, Callout } from "react-native-maps";
-import MapView from 'react-native-maps'
-// import MapViewDirections from 'react-native-maps-directions';
+import MapView from "react-native-maps";
 import * as Location from "expo-location";
 import mapStyle from "../styles/mapStyle";
-// import { MARKERS_DATA } from "../data";
-import { getAllSights } from "../api";
-import { AuthContext } from '../context/AuthContext'
+import { getAllSights, getUserByUsername, patchUserLocation } from "../api";
+import { AuthContext } from "../context/AuthContext";
 import { SightsContext } from "../context/SightsContext";
+import amenity from "../assets/amenity_marker.png";
+import historic from "../assets/historic_marker.png";
+import shop from "../assets/shop_marker.png";
+import leisure from "../assets/leisure_marker.png";
+import tourism from "../assets/tourism_marker.png";
 
 const { height } = Dimensions.get("window");
+
 const { width } = Dimensions.get("window");
 
 export default function MapScreen() {
-  const { user } = useContext(AuthContext)
+  const { user } = useContext(AuthContext);
   const { usersSights, setUsersSights } = useContext(SightsContext);
   const mapRef = useRef();
   const [currentLocation, setCurrentLocation] = useState(null);
   const [initialRegion, setInitialRegion] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(null);
-  // const [usersSights, setUsersSights] = useState([])
-  
-  // const [directions, setDirections] = useState([
-  //   {
-  //     latitude: 51.51804671105917,
-  //     longitude: -0.08383278364567782,
-  //   },
-  //   {
-  //     latitude: 51.51353018002063,
-  //     longitude: -0.13652633647427498,
-  //   },
-  // ]);
+
   const [errorMsg, setErrorMsg] = useState(null);
+  const [updateTime, setUpdateTime] = useState(0);
+
+  const [searchRadius, setSearchRadius] = useState(0);
 
   const handleMarkerPress = (coordinate) => {
     mapRef.current.animateToRegion({
@@ -73,47 +69,54 @@ export default function MapScreen() {
 
     getLocation();
 
-    // Hardcoded user 
-    getAllSights('JamesO').then((res) => {
+    getAllSights(user.displayName).then((res) => {
       setUsersSights(res);
-    })
+    });
   }, []);
-
 
   return (
     <View style={styles.container}>
-      <MapView
-        style={styles.map}
-        customMapStyle={mapStyle}
-        // provider="google"
-        googleMapsApiKey={`${process.env.GOOGLE_API_KEY}`}
-        ref={mapRef}
-        initialRegion={initialRegion}
-      >
-        {usersSights.map((sight) => (
-          <Marker 
-            key={sight.id}
-            coordinate={{
-              latitude: sight.lat,
-              longitude: sight.lon
-            }}
-            onPress={() => {
-              setSelectedLocation(sight);
-              handleMarkerPress(sight);
-            }}
-            image={require("../assets/map_marker.png")}
-          />
-        ))}
-    {/* <MapViewDirections 
-      origin={directions[0]}
-      destination={directions[1]}
-      apikey={`${process.env.GOOGLE_API_KEY}`}
-      strokeWidth={4}
-      strokeColor='#111111'/>
-    <Marker coordinate={directions[0]}/>
-    <Marker coordinate={directions[1]}/> */}
-      </MapView>
-      <FlatList 
+      <View style={styles.mapContainer}>
+        <MapView
+          style={styles.map}
+          customMapStyle={mapStyle}
+          // provider="google"
+          googleMapsApiKey={`${process.env.GOOGLE_API_KEY}`}
+          ref={mapRef}
+          initialRegion={initialRegion}
+        >
+          {usersSights.map((sight) => {
+            let type = "Default";
+            if (!!sight.tags.amenity) {
+              type = amenity;
+            } else if (!!sight.tags.historic) {
+              type = historic;
+            } else if (!!sight.tags.leisure) {
+              type = leisure;
+            } else if (!!sight.tags.shop) {
+              type = shop;
+            } else if (!!sight.tags.tourism) {
+              type = tourism;
+            }
+
+            return (
+              <Marker
+                key={sight.id}
+                coordinate={{
+                  latitude: sight.lat,
+                  longitude: sight.lon,
+                }}
+                onPress={() => {
+                  setSelectedLocation(sight);
+                  handleMarkerPress(sight);
+                }}
+                image={type}
+              />
+            );
+          })}
+        </MapView>
+      </View>
+      <FlatList
         data={usersSights}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
@@ -124,7 +127,9 @@ export default function MapScreen() {
             }}
           >
             <View style={styles.item}>
-              <Text style={styles.nameCard}>{item.tags.name || 'Local Sight'}</Text>
+              <Text style={styles.nameCard}>
+                {item.tags.name || "Local Sight"}
+              </Text>
             </View>
           </TouchableOpacity>
         )}
@@ -134,18 +139,28 @@ export default function MapScreen() {
         <View style={styles.detailCard}>
           <Text style={styles.detailTitle}>{selectedLocation.tags.name}</Text>
           <View style={styles.address}>
-            {selectedLocation.tags['addr:housenumber'] && 
-              <Text style={styles.text}>{selectedLocation.tags['addr:housenumber']} </Text>}
-            {selectedLocation.tags['addr:street'] && 
-              <Text style={styles.text}>{selectedLocation.tags['addr:street']}</Text>}
+            {selectedLocation.tags["addr:housenumber"] && (
+              <Text style={styles.text}>
+                {selectedLocation.tags["addr:housenumber"]}{" "}
+              </Text>
+            )}
+            {selectedLocation.tags["addr:street"] && (
+              <Text style={styles.text}>
+                {selectedLocation.tags["addr:street"]}
+              </Text>
+            )}
           </View>
-          {selectedLocation.tags.phone && 
-            <Text style={styles.text}>{selectedLocation.tags.phone}</Text>}
-          {selectedLocation.tags.website && 
-            <Text style={styles.text}>{selectedLocation.tags.website}</Text>}
-          <TouchableOpacity onPress={() => setSelectedLocation(null)}>
-            <Text style={styles.closeButton}>Close</Text>
-          </TouchableOpacity>
+          {selectedLocation.tags.phone && (
+            <Text style={styles.text}>{selectedLocation.tags.phone}</Text>
+          )}
+          {selectedLocation.tags.website && (
+            <Text style={styles.text}>{selectedLocation.tags.website}</Text>
+          )}
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity onPress={() => setSelectedLocation(null)}>
+              <Text style={styles.closeButton}>Close</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       )}
     </View>
@@ -154,21 +169,44 @@ export default function MapScreen() {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: "#ccc",
     flex: 1,
+    justifyContent: "center",
   },
-  map: {
-    height: height / 2,
-    width: width,
+  mapContainer: {
+    margin: "auto",
+    marginTop: 5,
+    borderWidth: 0,
+    borderRadius: 20,
+    height: width - 8,
+    width: width - 8,
+    overflow: "hidden",
+    elevation: 3,
+    zIndex: 3,
   },
+  map: { height: "100%", width: "100%" },
   list: {
+    marginTop: 5,
     flex: 1,
+    overflow: "visible",
+    elevation: 1,
+    zIndex: 1,
   },
   item: {
+    margin: "auto",
+    alignItems: "center",
+    backgroundColor: "rgb(235,235,235)",
     padding: 20,
-    borderBottomWidth: 1,
+    borderBottomWidth: 5,
     borderBottomColor: "#ccc",
+    width: width - 10,
+    borderRadius: 15,
+    zIndex: 1,
+    elevation: 1,
   },
   detailCard: {
+    flex: 1,
+    width: width - 10,
     bottom: 0,
     left: 0,
     right: 0,
@@ -176,25 +214,42 @@ const styles = StyleSheet.create({
     padding: 15,
     borderTopWidth: 1,
     borderTopColor: "#ccc",
+    alignItems: "center",
+    margin: "auto",
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+    elevation: 3,
+    zIndex: 3,
   },
   detailTitle: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 2,
-    textTransform: 'capitalize',
+    textTransform: "capitalize",
+    textAlign: "center",
+  },
+  buttonContainer: {
+    flex: 1,
+    justifyContent: "flex-end",
   },
   closeButton: {
+    padding: 10,
+    paddingHorizontal: 50,
+    borderRadius: 10,
     marginTop: 10,
-    color: "blue",
+    color: "black",
+    backgroundColor: "rgb(240,240,250)",
   },
   address: {
-    display: 'flex',
-    flexDirection: 'row'
+    display: "flex",
+    flexDirection: "row",
   },
   text: {
-    marginVertical: 1
+    marginVertical: 1,
+    alignText: "center",
+    margin: "auto",
   },
   nameCard: {
-    textTransform: 'capitalize',
-  }
+    textTransform: "capitalize",
+  },
 });
