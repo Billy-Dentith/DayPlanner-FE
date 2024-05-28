@@ -1,67 +1,56 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from "react-native";
-import { Formik } from 'formik';
-import * as Yup from 'yup';
 import RNPickerSelect from 'react-native-picker-select'
 import InterestsFilter from "./InterestsFilter";
-import { initialFilter } from "../data/Interests";
+// import { initialFilter } from "../data/Interests";
+import { patchUser } from "../api";
+import { AuthContext } from "../context/AuthContext";
 
-const validationSchema = Yup.object().shape({
-    radius: Yup
-        .string()
-        .required('Radius is required'),
-})
+export default RouteForm =({ usersInterests, setUsersInterests, currentRadius, navigation }) => {
+    const { user } = useContext(AuthContext);
+    const [radius, setRadius] = useState();
 
-export default RouteForm =() => {
-    const [filter, setFilter] = useState(initialFilter);
+    const handleSubmit = () => {
+        patchUser(user.displayName, undefined, radius, undefined, undefined, usersInterests).then((res) => {
+            // console.log(res);
+        })
+        navigation.navigate('Profile')
+    }
 
     return (
-        <Formik
-            initialValues={{  
-            }}
-            validationSchema={validationSchema}
-            onSubmit={(values) => {
-                console.log(values)
-                console.log(filter);
-            }}
-        >
-        {({ handleChange, handleBlur, handleSubmit, values, errors, isValid }) => (
-            <View style={styles.container}>
-                <Text style={styles.text}>Search Radius</Text>
-                <RNPickerSelect
-                    style={{...pickerStyles}}
-                    onValueChange={handleChange('radius')}
-                    onBlur={handleChange('radius')}
-                    placeholder={{}}
-                    items={[
-                        { label: '100 Meters', value: '100'},
-                        { label: '200 Meters', value: '200'},
-                        { label: '300 Meters', value: '300'},
-                        { label: '400 Meters', value: '400'},
-                        { label: '500 Meters', value: '500'},
-                        { label: '600 Meters', value: '600'},
-                        { label: '700 Meters', value: '700'},
-                        { label: '800 Meters', value: '800'},
-                        { label: '900 Meters', value: '900'},
-                        { label: '1 Kilometer', value: '1000'},
-                    ]}
-                    value={values.radius}
-                />
-                <Text style={styles.text}>Interests</Text>
-                <InterestsFilter filter={filter} setFilter={setFilter}></InterestsFilter>
-                <TouchableOpacity 
-                    style={styles.button}
-                    onPress={handleSubmit} 
-                    title="Submit"
-                    disabled={!isValid}    
-                >
-                    <Text style={styles.buttonText}>Submit</Text>
-                </TouchableOpacity>
-            </View>
+        <View style={styles.container}>
+            <Text style={styles.text}>Search Radius</Text>
+            <RNPickerSelect
+                style={{...pickerStyles}}
+                onValueChange={(value) => setRadius(value)}
+                onBlur={(value) => setRadius(value)}
+                placeholder={{}}
+                value={currentRadius}
+                items={[
+                    { label: '500 Meters', value: '500'},
+                    { label: '600 Meters', value: '600'},
+                    { label: '700 Meters', value: '700'},
+                    { label: '800 Meters', value: '800'},
+                    { label: '900 Meters', value: '900'},
+                    { label: '1000 Meters', value: '1000'},
+                    { label: '1100 Meters', value: '1100'},
+                    { label: '1200 Meters', value: '1200'},
+                    { label: '1300 Meters', value: '1300'},
+                    { label: '1400 Meter', value: '1400'},
+                    { label: '1500 Meter', value: '1500'},
+                    { label: '1600 Meter', value: '1600'},
+                ]}
+            />
+            <Text style={styles.text}>Interests</Text>
+            <InterestsFilter filter={usersInterests} setFilter={setUsersInterests}></InterestsFilter>
+            <TouchableOpacity 
+                style={styles.button}
+                onPress={handleSubmit} 
+            >
+                <Text style={styles.buttonText}>Confirm Changes</Text>
+            </TouchableOpacity>
+        </View>
        )}
-        </Formik>
-    )
-}
 
 const styles = StyleSheet.create({
     container: {
