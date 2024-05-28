@@ -6,6 +6,7 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [avatar, setAvatar] = useState(null);
   
     useEffect(() => {
       const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -20,6 +21,7 @@ export const AuthProvider = ({ children }) => {
         try {
           await signOut(auth);
           setUser(null);
+          setAvatar(null);
           console.log('User logged out successfully!');
         } catch (error) {
           console.error('Sign out error:', error.message);
@@ -27,7 +29,7 @@ export const AuthProvider = ({ children }) => {
       };
 
     return (
-        <AuthContext.Provider value={{ user, setUser, handleSignOut }}>
+        <AuthContext.Provider value={{ user, setUser, avatar, setAvatar, handleSignOut }}>
           {children}
         </AuthContext.Provider>
     );

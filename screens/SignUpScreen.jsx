@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { StyleSheet, View, Text, TextInput, ScrollView, TouchableOpacity } from "react-native";
+import React, { useState, useContext } from "react";
+import { StyleSheet, View, Text, TextInput, ScrollView, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import * as ImagePicker from 'expo-image-picker';
+// import * as ImagePicker from 'expo-image-picker';
 import { createUserWithEmailAndPassword, updateProfile } from "@firebase/auth";
 import { auth } from "../firebase/firebase";
 import { getAllUsers, postUser } from "../api";
@@ -9,8 +9,17 @@ import axios from "axios";
 import { initialFilter } from "../data/Interests";
 import InterestsFilter from "../components/InterestsFilter";
 import RNPickerSelect from 'react-native-picker-select'
+import { AuthContext } from "../context/AuthContext";
+
+import avatar1 from '../assets/avatars/avatar1.png';
+import avatar2 from '../assets/avatars/avatar2.png';
+import avatar3 from '../assets/avatars/avatar3.png';
+import avatar4 from '../assets/avatars/avatar4.png';
 
 export default function SignUpScreen({ navigation }) {
+
+  const { setAvatar: setContextAvatar } = useContext(AuthContext);
+
   const [username, setUsername] = useState('');
   const [usernameError, setUsernameError] = useState('');
   const [name, setName] = useState('');
@@ -59,6 +68,8 @@ export default function SignUpScreen({ navigation }) {
         await updateProfile(userCredential.user, { displayName: username });
         console.log('User created successfully!');
 
+        setContextAvatar(avatar); 
+
         // Hardcoded lon lat
         await postUser(name, username, searchRadius, -0.140634, 51.501476, userInterestsFilter)
 
@@ -70,20 +81,20 @@ export default function SignUpScreen({ navigation }) {
     }
   }
 
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+  // const pickImage = async () => {
+  //   let result = await ImagePicker.launchImageLibraryAsync({
+  //     mediaTypes: ImagePicker.MediaTypeOptions.All,
+  //     allowsEditing: true,
+  //     aspect: [4, 3],
+  //     quality: 1,
+  //   });
 
-    // console.log(result);
+  //   // console.log(result);
 
-    if (!result.canceled) {
-      setAvatar(result.assets[0].uri);
-    }
-  };
+  //   if (!result.canceled) {
+  //     setAvatar(result.assets[0].uri);
+  //   }
+  // };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -138,20 +149,21 @@ export default function SignUpScreen({ navigation }) {
             style={styles.TextInput}
           />
           {passwordError ? <Text style={styles.error}>{passwordError}</Text> : null}
-          <Text style={styles.text}>Choose a profile picture:</Text>
-          <TouchableOpacity onPress={pickImage} style={styles.button}>
-            <Text style={styles.buttonText}>
-              Choose from camera roll
-            </Text>
+          <Text style={styles.text}>Choose Your Avatar</Text>
+        <View style={styles.avatarContainer}>
+          <TouchableOpacity onPress={() => setAvatar(Image.resolveAssetSource(avatar1).uri)}>
+            <Image source={avatar1} style={[styles.avatar, avatar === Image.resolveAssetSource(avatar1).uri && styles.selectedAvatar]} />
           </TouchableOpacity>
-          {avatar && (
-            <View style={styles.container}>
-                <Image
-                  source={{ uri: avatar }}
-                  style={styles.image}
-                />
-            </View>
-          )}
+          <TouchableOpacity onPress={() => setAvatar(Image.resolveAssetSource(avatar2).uri)}>
+            <Image source={avatar2} style={[styles.avatar, avatar === Image.resolveAssetSource(avatar2).uri && styles.selectedAvatar]} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setAvatar(Image.resolveAssetSource(avatar3).uri)}>
+            <Image source={avatar3} style={[styles.avatar, avatar === Image.resolveAssetSource(avatar3).uri && styles.selectedAvatar]} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setAvatar(Image.resolveAssetSource(avatar4).uri)}>
+            <Image source={avatar4} style={[styles.avatar, avatar === Image.resolveAssetSource(avatar4).uri && styles.selectedAvatar]} />
+          </TouchableOpacity>
+        </View>
           <Text style={styles.text}>Choose your interests:</Text>
           <View style={styles.interestsContainer}>
             <InterestsFilter filter={userInterestsFilter} setFilter={setUserInterestsFilter}></InterestsFilter>
@@ -253,6 +265,24 @@ const styles = StyleSheet.create({
     marginLeft: 25,
     marginBottom: 10,
     alignSelf: "flex-start",
+  },
+  avatarContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  avatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    marginHorizontal: 10,
+    borderWidth: 2,
+    borderColor: 'white',
+  },
+  selectedAvatar: {
+    width: 100,
+    height: 100,
+    borderColor: 'yellow',
   },
   image: {
     width: 200,
