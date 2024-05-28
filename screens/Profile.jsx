@@ -7,7 +7,6 @@ import {
     TouchableOpacity,
   } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
-import { auth } from "../firebase/firebase";
 import { AuthContext } from "../context/AuthContext";
 import { getUserByUsername } from "../api";
 
@@ -43,7 +42,7 @@ export default function Profile() {
         <Text style={styles.textTitle}>User Information</Text>
         <Text style={styles.text}>
           Name:{"  "}
-          <Text style={styles.line}>Billy</Text>
+          <Text style={styles.line}>{userDB.displayName}</Text>
         </Text>
         <Text style={styles.text}>
           Username:{"  "}
@@ -51,7 +50,7 @@ export default function Profile() {
         </Text>
         <Text style={styles.text}>
           Location:{"  "}
-          <Text style={styles.line}>London</Text>
+          <Text style={styles.line}>{userDB.location}</Text>
         </Text>
       </View>
       <View style={styles.container}>
