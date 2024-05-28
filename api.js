@@ -61,3 +61,8 @@ export const getSightById = async (sightId) => {
     return response.data;
 }
 
+export const getRoute = async (username, sights) => {
+    const response = await dayPlannerApi.post(`/routes/${username}`, sights);
+
+    return response.data;
+}

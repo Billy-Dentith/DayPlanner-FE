@@ -1,12 +1,16 @@
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 // import RouteForm from '../components/RouteForm'
 import { SightsContext } from "../context/SightsContext";
 import SightItem from '../components/SightItem'
+import { getRoute } from "../api";
+import { AuthContext } from "../context/AuthContext";
 
 const RoutePlanner = () => {
+  const { user } = useContext(AuthContext);
   const { usersSights, setUsersSights } = useContext(SightsContext);
-  const [routeSights, setRouteSights] = useState([]); 
+  // const [selectedSights, setSelectedSights] = useState([]);
+  const [routeCoords, setRouteCoords] = useState(null);
   const [sightsFilter, setSightsFilter] = useState(
     usersSights.reduce((obj, sight) => {
       obj[sight.id] = false;
@@ -19,7 +23,23 @@ const RoutePlanner = () => {
       ...prevFilter,
       [sightId]: ! prevFilter[sightId]
     }))
-  }
+  };
+
+  const handleSubmit = (sights) => {
+    const sightIdsArr = Object.keys(sights).filter((sight) => sightsFilter[sight] === true);
+
+    const sightsArr = usersSights.filter((sight) => {
+      if (sightIdsArr.includes(sight.id.toString())) {
+        return sight;
+      }
+    });
+    
+    // setSelectedSights(sightsArr);
+
+    getRoute(user.displayName, sightsArr).then((res) => {
+      setRouteCoords(res);
+    })
+  };
   
   return (
     <View style={styles.container}>
@@ -36,7 +56,6 @@ const RoutePlanner = () => {
               ]}
               onPress={() => {
                 handleToggle(item.id);
-                console.log(item);
               }}
             >
               <Text 
@@ -60,7 +79,7 @@ const RoutePlanner = () => {
       />
       <TouchableOpacity
         style={styles.button}
-        onPress={() => console.log(sightsFilter)}>
+        onPress={() => handleSubmit(sightsFilter)}>
         <Text style={styles.buttonText}>Submit</Text>
       </TouchableOpacity>
     </View>
