@@ -33,7 +33,7 @@ export const postUser = async (name, username, searchRadius, longitude, latitude
     return response.data;
 }
 
-export const patchUser = async (avatar, searchRadius, lon, lat, userFilter) => {
+export const patchUser = async (username, avatar, searchRadius, lon, lat, userFilter) => {
     const response = await dayPlannerApi.patch(`/user/${username}`, {
         avatar: avatar,
         settings: {
