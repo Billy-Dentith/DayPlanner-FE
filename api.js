@@ -50,8 +50,8 @@ export const patchUser = async (username, avatar, searchRadius, lon, lat, userFi
 }
 
 export const getAllSights = async (username) => {
-    const response= await dayPlannerApi.get(`/sights?username=${username}`);
-
+    const response= await dayPlannerApi.get(`/sights?username=${username}`).catch((err) => {console.log(err)});
+    
     return response.data; 
 }
 

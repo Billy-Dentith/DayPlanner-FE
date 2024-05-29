@@ -13,7 +13,7 @@ import { Marker, Polyline, Polygon, Callout } from "react-native-maps";
 import MapView from "react-native-maps";
 import * as Location from "expo-location";
 import mapStyle from "../styles/mapStyle";
-import { getAllSights, getUserByUsername, patchUserLocation } from "../api";
+import { getAllSights, getUserByUsername, patchUser, patchUserLocation } from "../api";
 import { AuthContext } from "../context/AuthContext";
 import { SightsContext } from "../context/SightsContext";
 import amenity from "../assets/amenity_marker.png";
@@ -37,7 +37,7 @@ export default function MapScreen() {
   const [errorMsg, setErrorMsg] = useState(null);
   const [updateTime, setUpdateTime] = useState(0);
 
-  const [searchRadius, setSearchRadius] = useState(0);
+  const [searchRadius, setSearchRadius] = useState(1000);
 
   const handleMarkerPress = (coordinate) => {
     mapRef.current.animateToRegion({
@@ -57,7 +57,9 @@ export default function MapScreen() {
       }
 
       let location = await Location.getCurrentPositionAsync({});
-      setCurrentLocation(location.coords);
+      console.log(location.coords)
+      await setCurrentLocation(location.coords);
+      
 
       setInitialRegion({
         latitude: location.coords.latitude,
@@ -67,11 +69,21 @@ export default function MapScreen() {
       });
     };
 
-    getLocation();
-
-    getAllSights(user.displayName).then((res) => {
-      setUsersSights(res);
-    });
+    getLocation()
+    .then((res) => {
+      return getUserByUsername(user.displayName)  
+    })
+    .then((res)=> {
+      if(res.settings.searchRadius) {
+        setSearchRadius(res.settings.searchRadius)
+      }
+      patchUser(user.displayName, undefined, searchRadius, currentLocation.longitude, currentLocation.latitude, undefined)
+    })
+    
+    // getAllSights(user.displayName).then((res) => {
+    //   console.log(res)
+    //   setUsersSights(res);
+  //   });
   }, []);
 
   return (
