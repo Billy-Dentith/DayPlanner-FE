@@ -8,18 +8,23 @@ import {
   } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { getUserByUsername } from "../api";
+import { getSavedRoutes, getUserByUsername } from "../api";
 
 export default function Profile() {
-  const [message, setMessage] = useState('');
   const [userDB, setUserDB] = useState({});
   const { handleSignOut, user, avatar } = useContext(AuthContext);
+  const [savedRoutes, setSavedRoutes] = useState([])
 
   useEffect(() => {
     getUserByUsername(user.displayName).then((res) => {
       setUserDB(res);
-    })
-  }, [])
+    }).then(() => {
+      return getSavedRoutes(user.displayName).then((res) => {
+        setSavedRoutes(res);
+      }).catch((err) => console.log(err))
+    }).catch((err) => console.log(err))
+    
+  }, [user])
   
   return (
     <ScrollView>
@@ -52,6 +57,23 @@ export default function Profile() {
           Location:{"  "}
           <Text style={styles.line}>{userDB.location}</Text>
         </Text>
+      </View>
+      <View style={styles.infoContainer}>
+        <Text style={styles.textTitle}>Saved Routes</Text>
+        {savedRoutes.map((route) => {
+          return (
+            <View style={styles.routeContainer} key={route.id}>
+              <Text style={styles.text}>
+                Route Name:{"  "}
+                <Text style={styles.text}>{route.name}</Text>
+              </Text>
+              <Text style={styles.text}>
+                Number of Sights:{"  "}
+                <Text style={styles.text}>{route.sights.length}</Text>
+              </Text>
+            </View>
+          )
+        })}
       </View>
       <View style={styles.container}>
         <TouchableOpacity style={styles.button} onPress={handleSignOut}>
@@ -102,8 +124,8 @@ const styles = StyleSheet.create({
     color: "dimgray",
     fontWeight: "bold",
     fontSize: 20,
-    marginBottom: 10,
-    padding: 10,
+    marginBottom: 5,
+    padding: 5,
   },
   infoContainer: {
     alignSelf: "center",
@@ -115,5 +137,11 @@ const styles = StyleSheet.create({
     fontSize: 25,
     alignSelf: "center",
   },
+  routeContainer: {
+    borderWidth: 2,
+    borderRadius: 15,
+    borderColor: 'dimgray',
+    padding: 10
+  }
 });
   

@@ -7,6 +7,7 @@ import Profile from "../screens/Profile";
 import { Ionicons } from "@expo/vector-icons";
 import { AuthContext } from "../firebase/firebase";
 import ProfileNavigator from "./ProfileNavigator";
+import PopularSights from "../screens/PopularSights";
 
 const Tab = createBottomTabNavigator();
 
@@ -30,6 +31,16 @@ function MainTabNavigator() {
           headerTitleAlign: "center",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="map" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Popular Sights"
+        component={PopularSights}
+        options={{
+          headerTitleAlign: "center",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="flame" color={color} size={size} />
           ),
         }}
       />
