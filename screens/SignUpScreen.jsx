@@ -202,17 +202,18 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: 'lightblue',
+    backgroundColor: '#6F848c',
     paddingTop: 100,
     paddingBottom: 100,
+    elevation:0,
+    zIndex:0
   },
   heading: {
     color: "white",
     fontSize: 40,
     fontWeight: "bold",
-    marginLeft: 25,
     marginTop: 5,
-    alignSelf: 'left',
+    textAlign: 'center'
   },
   formView: {
     width: "100%",
@@ -233,7 +234,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     marginTop: 20,
     color: "white",
-    fontSize: 17
+    fontSize: 17,
   },
   button: {
     width: "90%",
@@ -252,9 +253,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
   },
   icon: {
-    marginLeft: 30,
     marginBottom: 20,
-    alignSelf: 'left',
   },
   text: {
     fontWeight: "normal",
@@ -272,8 +271,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   avatar: {
-    width: 80,
-    height: 80,
+    width: 70,
+    height: 70,
     borderRadius: 40,
     marginHorizontal: 10,
     borderWidth: 2,
