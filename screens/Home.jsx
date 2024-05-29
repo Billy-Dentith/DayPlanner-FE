@@ -70,30 +70,33 @@ export default function MapScreen() {
         latitudeDelta: 0.005,
         longitudeDelta: 0.005,
       });
+      return location.coords;
     };
 
     getLocation();
 
+    console.log("Getting USer");
     getUserByUsername(user.displayName)
       .then((res) => {
+        console.log(res.settings.searchRadius);
         if (res.settings.searchRadius) {
-          setSearchRadius(res.settings.searchRadius);
+          return Promise.all([getLocation(), res.settings.searchRadius]);
         }
-        return getLocation();
+        return Promise.all([getLocation(), searchRadius]);
       })
-      .then((res) => {
-        console.log(currentLocation);
+      .then(([Location, radius]) => {
+        console.log(Location, radius);
         return patchUser(
           user.displayName,
           undefined,
-          searchRadius,
-          currentLocation.longitude,
-          currentLocation.latitude,
+          radius,
+          res.longitude,
+          res.latitude,
           undefined
         );
       })
-      .then((res) => {
-        console.log(res);
+      .then((response) => {
+        console.log(reponse);
       });
 
     // getAllSights(user.displayName).then((res) => {
