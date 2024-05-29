@@ -13,7 +13,12 @@ import { Marker, Polyline, Polygon, Callout } from "react-native-maps";
 import MapView from "react-native-maps";
 import * as Location from "expo-location";
 import mapStyle from "../styles/mapStyle";
-import { getAllSights, getUserByUsername, patchUser, patchUserLocation } from "../api";
+import {
+  getAllSights,
+  getUserByUsername,
+  patchUser,
+  patchUserLocation,
+} from "../api";
 import { AuthContext } from "../context/AuthContext";
 import { SightsContext } from "../context/SightsContext";
 import amenity from "../assets/amenity_marker.png";
@@ -57,9 +62,7 @@ export default function MapScreen() {
       }
 
       let location = await Location.getCurrentPositionAsync({});
-      console.log(location.coords)
       await setCurrentLocation(location.coords);
-      
 
       setInitialRegion({
         latitude: location.coords.latitude,
@@ -69,21 +72,34 @@ export default function MapScreen() {
       });
     };
 
-    getLocation()
-    .then((res) => {
-      return getUserByUsername(user.displayName)  
-    })
-    .then((res)=> {
-      if(res.settings.searchRadius) {
-        setSearchRadius(res.settings.searchRadius)
-      }
-      patchUser(user.displayName, undefined, searchRadius, currentLocation.longitude, currentLocation.latitude, undefined)
-    })
-    
+    getLocation();
+
+    getUserByUsername(user.displayName)
+      .then((res) => {
+        if (res.settings.searchRadius) {
+          setSearchRadius(res.settings.searchRadius);
+        }
+        return getLocation();
+      })
+      .then((res) => {
+        console.log(currentLocation);
+        return patchUser(
+          user.displayName,
+          undefined,
+          searchRadius,
+          currentLocation.longitude,
+          currentLocation.latitude,
+          undefined
+        );
+      })
+      .then((res) => {
+        console.log(res);
+      });
+
     // getAllSights(user.displayName).then((res) => {
     //   console.log(res)
     //   setUsersSights(res);
-  //   });
+    //   });
   }, []);
 
   return (
