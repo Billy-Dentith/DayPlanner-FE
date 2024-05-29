@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, TextInput, Image, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { auth } from '../firebase/firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from '@firebase/auth'; 
 
@@ -31,6 +31,10 @@ export default function AuthScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <Image
+        style={styles.logo}
+        source={require('../assets/plan_ahead.png')}
+      />
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -91,5 +95,12 @@ const styles = StyleSheet.create({
   buttonText: {
     fontWeight: 'bold',
     fontSize: 17
+  },
+  logo: {
+    marginBottom: 75,
+    alignSelf: 'center',
+    width: 250,
+    height: 150,
+    resizeMode: 'auto',
   }
 });

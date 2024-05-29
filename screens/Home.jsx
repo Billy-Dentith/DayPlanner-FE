@@ -103,7 +103,6 @@ export default function MapScreen() {
         return getAllSights(user.displayName)
       })
       .then((res) => {
-        console.log(res)
         setUsersSights(res);
       })
       console.log(updateTime)
