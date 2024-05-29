@@ -54,6 +54,10 @@ export default function MapScreen() {
   };
 
   useEffect(() => {
+    const interval = setInterval(() => {
+      setUpdateTime(updateTime + 1)
+      
+    }, 20000)
     const getLocation = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
@@ -74,36 +78,37 @@ export default function MapScreen() {
     };
 
     getLocation();
-
-    console.log("Getting USer");
+  
     getUserByUsername(user.displayName)
       .then((res) => {
-        console.log(res.settings.searchRadius);
+  
         if (res.settings.searchRadius) {
           return Promise.all([getLocation(), res.settings.searchRadius]);
         }
         return Promise.all([getLocation(), searchRadius]);
       })
       .then(([Location, radius]) => {
-        console.log(Location, radius);
+  
         return patchUser(
           user.displayName,
           undefined,
           radius,
-          res.longitude,
-          res.latitude,
+          Location.longitude,
+          Location.latitude,
           undefined
         );
       })
       .then((response) => {
-        console.log(reponse);
-      });
-
-    // getAllSights(user.displayName).then((res) => {
-    //   console.log(res)
-    //   setUsersSights(res);
-    //   });
-  }, []);
+  
+        return getAllSights(user.displayName)
+      })
+      .then((res) => {
+        console.log(res)
+        setUsersSights(res);
+      })
+      console.log(updateTime)
+    return () => clearInterval(interval)
+  }, [updateTime])
 
   return (
     <View style={styles.container}>

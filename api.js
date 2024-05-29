@@ -11,7 +11,10 @@ export const getAllUsers = async () => {
 }
 
 export const getUserByUsername = async (username) => {
-    const response = await dayPlannerApi.get(`/users/${username}`);
+    const response = await dayPlannerApi.get(`/users/${username}`)
+    .catch((err) => {
+        console.log(err)
+    })
 
     return response.data;
 }
@@ -51,7 +54,7 @@ export const patchUser = async (username, avatar, searchRadius, lon, lat, userFi
 
 export const getAllSights = async (username) => {
     const response= await dayPlannerApi.get(`/sights?username=${username}`).catch((err) => {console.log(err)});
-    
+
     return response.data; 
 }
 
