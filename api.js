@@ -81,3 +81,7 @@ export const getRouteById = async (routeId) => {
 
     return response.data;
 }
+
+export const deleteRouteById = async (routeId) => {
+    const response = await dayPlannerApi.delete(`/routes/${routeId}`);
+}

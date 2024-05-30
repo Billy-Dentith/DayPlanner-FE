@@ -8,16 +8,18 @@ import {
   } from "react-native";
 import React, { useContext, useDeferredValue, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { getRouteById, getSavedRoutes, getUserByUsername } from "../api";
+import { deleteRouteById, getRouteById, getSavedRoutes, getUserByUsername } from "../api";
 import { SightsContext } from "../context/SightsContext";
 import MapRoute from "../components/MapComponent";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function Profile({ navigation }) {
   const [userDB, setUserDB] = useState({});
   const { handleSignOut, user, avatar } = useContext(AuthContext);
   // const { setSavedRouteId } = useContext(SightsContext);
   const [savedRoute, setSavedRoute] = useState();
-  const [savedRoutes, setSavedRoutes] = useState([])
+  const [savedRoutes, setSavedRoutes] = useState([]);
+  const [refreshPage, setRefreshPage] = useState(0);
 
   useEffect(() => {
     getUserByUsername(user.displayName)
@@ -32,10 +34,16 @@ export default function Profile({ navigation }) {
         console.log(err)
       })
 
-  }, [user])
+  }, [user, refreshPage])
 
   const handleRoutePress = (routeId) => {
     getRouteById(routeId).then((res) => setSavedRoute(res))
+  }
+
+  const handleDelete = (routeId) => {
+    deleteRouteById(routeId).then(() => {
+      setRefreshPage(refreshPage + 1)
+    })
   }
   
   if (savedRoute) {
@@ -95,6 +103,13 @@ export default function Profile({ navigation }) {
                     <Text style={styles.text}>{route.sights.length}</Text>
                   </Text>
                 </TouchableOpacity>
+                  <Ionicons
+                    onPress={() => handleDelete(route._id)}
+                    style={styles.icon}
+                    name="close-outline"
+                    color={"dimgray"}
+                    size={40}
+                  />
               </View>
             )
           )}
@@ -164,7 +179,8 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 15,
     borderColor: 'dimgray',
-    padding: 10
+    padding: 10,
+    flexDirection: 'row',
   },
   avatar: {
     width: 200,
@@ -191,6 +207,11 @@ const styles = StyleSheet.create({
   },
   endButtonText: {
     fontSize: 16,
+  },
+  icon: {
+    marginLeft: 50,
+    marginBottom: 10,
+    alignSelf: 'center',
   },
 });
   
