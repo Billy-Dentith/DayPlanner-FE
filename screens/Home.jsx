@@ -105,7 +105,6 @@ export default function MapScreen() {
       .then((res) => {
         setUsersSights(res);
       })
-      console.log(updateTime)
     return () => clearInterval(interval)
   }, [updateTime])
 

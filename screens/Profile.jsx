@@ -9,21 +9,38 @@ import {
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { getSavedRoutes, getUserByUsername } from "../api";
+import { SightsContext } from "../context/SightsContext";
 
-export default function Profile() {
+export default function Profile({ navigation }) {
   const [userDB, setUserDB] = useState({});
   const { handleSignOut, user, avatar } = useContext(AuthContext);
+  const { setSavedRouteId } = useContext(SightsContext);
   const [savedRoutes, setSavedRoutes] = useState([])
 
   useEffect(() => {
-    getUserByUsername(user.displayName).then((res) => {
-      setUserDB(res);
-    }).then(() => {
-      return getSavedRoutes(user.displayName).then((res) => {
+    getUserByUsername(user.displayName)
+      .then((res) => {
+        setUserDB(res);
+        return getSavedRoutes(user.displayName);
+      })
+      .then((res) => {
         setSavedRoutes(res);
-      }).catch((err) => console.log(err))
-    }).catch((err) => console.log(err))
-    
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+
+    // Promise.all([
+    //   getUserByUsername(user.displayName),
+    //   getSavedRoutes(user.displayName)
+    // ])
+    // .then(([userRes, routesRes]) => {
+    //   setUserDB(userRes);
+    //   setSavedRoutes(routesRes);
+    // })
+    // .catch((err) => {
+    //   console.log(err);
+    // })
   }, [user])
   
   return (
@@ -31,14 +48,7 @@ export default function Profile() {
       <View style={styles.container}>
         <View>
           <Image
-            style={{
-              width: 200,
-              height: 200,
-              borderRadius: 100,
-              borderColor: "dimgray",
-              borderWidth: 7,
-              marginBottom: 20,
-            }}
+            style={styles.avatar}
             source={{ uri: avatar }}
           />
         </View>
@@ -60,20 +70,26 @@ export default function Profile() {
       </View>
       <View style={styles.infoContainer}>
         <Text style={styles.textTitle}>Saved Routes</Text>
-        {savedRoutes.map((route) => {
-          return (
-            <View style={styles.routeContainer} key={route.id}>
-              <Text style={styles.text}>
-                Route Name:{"  "}
-                <Text style={styles.text}>{route.name}</Text>
-              </Text>
-              <Text style={styles.text}>
-                Number of Sights:{"  "}
-                <Text style={styles.text}>{route.sights.length}</Text>
-              </Text>
+        {savedRoutes.map((route) => (
+            <View style={styles.routeContainer} key={route._id}>
+              <TouchableOpacity
+                onPress={() => {
+                  setSavedRouteId(route._id);
+                  navigation.navigate('Day Planner');
+                }}
+              >
+                <Text style={styles.text}>
+                  Route Name:{"  "}
+                  <Text style={styles.text}>{route.name}</Text>
+                </Text>
+                <Text style={styles.text}>
+                  Number of Sights:{"  "}
+                  <Text style={styles.text}>{route.sights.length}</Text>
+                </Text>
+              </TouchableOpacity>
             </View>
           )
-        })}
+        )}
       </View>
       <View style={styles.container}>
         <TouchableOpacity style={styles.button} onPress={handleSignOut}>
@@ -142,6 +158,14 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderColor: 'dimgray',
     padding: 10
-  }
+  },
+  avatar: {
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    borderColor: "dimgray",
+    borderWidth: 7,
+    marginBottom: 20,
+  },
 });
   
