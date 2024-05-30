@@ -105,6 +105,7 @@ export default function MapScreen() {
       .then((res) => {
         setUsersSights(res);
       })
+      .catch((err) => console.log(err))
     return () => clearInterval(interval)
   }, [updateTime])
 
@@ -118,6 +119,7 @@ export default function MapScreen() {
           googleMapsApiKey={`${process.env.GOOGLE_API_KEY}`}
           ref={mapRef}
           initialRegion={initialRegion}
+          showsUserLocation={true}
         >
           {usersSights.map((sight) => {
             let type = "Default";
