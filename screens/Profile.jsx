@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   button: {
-    backgroundColor: "dimgray",
+    backgroundColor: "#6F848c",
     width: "90%",
     padding: 15,
     borderRadius: 10,
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 20,
     alignSelf: "center",
-    backgroundColor: "dimgray",
+    backgroundColor: "#6F848c",
     marginBottom: 10,
     width: "100%",
     padding: 2,
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
   },
   text: {
     marginTop: 5,
-    color: "dimgray",
+    color: "#17343E",
     fontWeight: "bold",
     fontSize: 20,
     marginBottom: 5,
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
   routeContainer: {
     borderWidth: 2,
     borderRadius: 15,
-    borderColor: 'dimgray',
+    borderColor: '#6F848c',
     padding: 10,
     flexDirection: 'row',
   },

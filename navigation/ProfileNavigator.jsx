@@ -14,6 +14,8 @@ function ProfileNavigator() {
         component={Profile}
         options={({ navigation }) => ({
           title: "Profile",
+          headerStyle: {backgroundColor:'#B0D9E8'},
+          headerTitleStyle:{color: '#17343E'},
           headerTitleAlign: "center",
           headerRight: () => (
             <Ionicons
@@ -31,6 +33,8 @@ function ProfileNavigator() {
         name="Settings"
         component={Settings}
         options={({ navigation }) => ({
+          headerStyle: {backgroundColor:'#B0D9E8'},
+          headerTitleStyle:{color: '#17343E'},
           headerTitleAlign: "center",
           title: "Settings",
           headerLeft: () => (

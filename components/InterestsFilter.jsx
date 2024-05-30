@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   option: {
-    backgroundColor: 'lightblue',
+    backgroundColor: '#6F848c',
     borderWidth: 2,
     borderColor: 'white',
     borderRadius: 20,

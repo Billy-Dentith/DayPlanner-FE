@@ -18,7 +18,9 @@ function MainTabNavigator() {
         name="Home"
         component={Home}
         options={{
+          headerStyle: {backgroundColor:'#B0D9E8'},
           headerTitleAlign: "center",
+          headerTitleStyle:{color: '#17343E'},
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" color={color} size={size} />
           ),
@@ -28,7 +30,9 @@ function MainTabNavigator() {
         name="Day Planner"
         component={DayPlanner}
         options={{
+          headerStyle: {backgroundColor:'#B0D9E8'},
           headerTitleAlign: "center",
+          headerTitleStyle:{color: '#17343E'},
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="map" color={color} size={size} />
           ),
@@ -38,6 +42,7 @@ function MainTabNavigator() {
         name="Popular Sights"
         component={PopularSights}
         options={{
+          headerStyle: {backgroundColor:'#B0D9E8'},
           headerTitleAlign: "center",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="flame" color={color} size={size} />
@@ -45,7 +50,7 @@ function MainTabNavigator() {
         }}
       />
       <Tab.Screen
-        name="Profile Navigator"
+        name="My Profile"
         component={ProfileNavigator}
         options={{
           headerShown: false,
