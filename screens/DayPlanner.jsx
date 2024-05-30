@@ -1,51 +1,83 @@
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 // import RouteForm from '../components/RouteForm'
 import { SightsContext } from "../context/SightsContext";
 import SightItem from '../components/SightItem'
 import { getRoute } from "../api";
 import { AuthContext } from "../context/AuthContext";
 import MapRoute from "../components/MapComponent";
+import { getRouteById } from "../api";
+import { useIsFocused, useNavigation, useFocusEffect } from "@react-navigation/native";
+
 
 const RoutePlanner = () => {
   const { user } = useContext(AuthContext);
-  const { usersSights, setUsersSights } = useContext(SightsContext);
+  const { usersSights, setUsersSights, savedRouteId, setSavedRouteId } = useContext(SightsContext);
   const [selectedSights, setSelectedSights] = useState([]);
   const [routeCoords, setRouteCoords] = useState();
+  const [savedRoute, setSavedRoute] = useState();
   const [sightsFilter, setSightsFilter] = useState(
-    usersSights.reduce((obj, sight) => {
-      obj[sight.id] = false;
-      return obj;
-    }, {})
+    () => usersSights.reduce((obj, sight) => ({ ...obj, [sight.id]: false }), {})
   );
 
   const handleToggle = (sightId) => {
     setSightsFilter((prevFilter) => ({
       ...prevFilter,
-      [sightId]: ! prevFilter[sightId]
+      [sightId]: !prevFilter[sightId]
     }))
   };
 
-  const handleSubmit = (sights) => {
+  const handleSubmit = async (sights) => {
     const sightIdsArr = Object.keys(sights).filter((sight) => sightsFilter[sight] === true);
 
-    const sightsArr = usersSights.filter((sight) => {
-      if (sightIdsArr.includes(sight.id.toString())) {
-        return sight;
-      }
-    });
+    const sightsArr = usersSights.filter((sight) => sightIdsArr.includes(sight.id.toString()));
     
     setSelectedSights(sightsArr);
 
-    getRoute(user.displayName, sightsArr).then((res) => {
-      setRouteCoords(res);
-    })
+    try {
+      const route = await getRoute(user.displayName, sightsArr);
+      setRouteCoords(route);
+    } catch (err) {
+      console.error("Failed to get route: ", err)
+    }
   };
-  
+
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      style={[
+        styles.option,
+        sightsFilter[item.id] && styles.selectedOption,
+      ]}
+      onPress={() => {
+        handleToggle(item.id);
+      }}
+    >
+      <Text 
+        style={[
+          styles.optionText,
+          sightsFilter[item.id] && styles.selectedOptionText 
+        ]}
+      >
+        {item.tags.name || 'Local Sight'}
+      </Text>
+      <Text
+        style={[
+          styles.optionText,
+          sightsFilter[item.id] && styles.selectedOptionText 
+          ]}
+      >
+        {item.tags.shop || item.tags.leisure || item.tags.historic || item.tags.amenity || item.tags.tourism}
+      </Text>
+    </TouchableOpacity>
+  )
+
   if (routeCoords) {
     return (
       <View style={styles.container}>
-        <MapRoute routeCoords={routeCoords} selectedSights={selectedSights}></MapRoute>
+        <MapRoute 
+          routeCoords={routeCoords} 
+          selectedSights={selectedSights} 
+        />
         <TouchableOpacity
         style={styles.endButton}
           onPress={() => setRouteCoords()}
@@ -60,36 +92,9 @@ const RoutePlanner = () => {
       <Text style={styles.header}>Choose from the below sights to start planning your route:</Text>
       <FlatList 
           data={usersSights}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id.toString()}
           style={styles.list}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={[
-                styles.option,
-                sightsFilter[item.id] && styles.selectedOption,
-              ]}
-              onPress={() => {
-                handleToggle(item.id);
-              }}
-            >
-              <Text 
-                style={[
-                  styles.optionText,
-                  sightsFilter[item.id] && styles.selectedOptionText 
-                ]}
-              >
-                {item.tags.name || 'Local Sight'}
-              </Text>
-              <Text
-                style={[
-                  styles.optionText,
-                  sightsFilter[item.id] && styles.selectedOptionText 
-                  ]}
-              >
-                {item.tags.shop || item.tags.leisure || item.tags.historic || item.tags.amenity || item.tags.tourism}
-              </Text>
-            </TouchableOpacity>
-          )}
+          renderItem={renderItem}
       />
       <TouchableOpacity
         style={styles.button}

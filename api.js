@@ -75,3 +75,9 @@ export const getSavedRoutes = async (username) => {
 
     return response.data;
 }
+
+export const getRouteById = async (routeId) => {
+    const response = await dayPlannerApi.get(`/routes/${routeId}`);
+
+    return response.data;
+}

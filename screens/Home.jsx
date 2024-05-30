@@ -57,7 +57,7 @@ export default function MapScreen() {
     const interval = setInterval(() => {
       setUpdateTime(updateTime + 1)
       
-    }, 20000)
+    }, 60000)
     const getLocation = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
@@ -105,7 +105,7 @@ export default function MapScreen() {
       .then((res) => {
         setUsersSights(res);
       })
-      console.log(updateTime)
+      .catch((err) => console.log(err))
     return () => clearInterval(interval)
   }, [updateTime])
 
@@ -119,6 +119,7 @@ export default function MapScreen() {
           googleMapsApiKey={`${process.env.GOOGLE_API_KEY}`}
           ref={mapRef}
           initialRegion={initialRegion}
+          showsUserLocation={true}
         >
           {usersSights.map((sight) => {
             let type = "Default";
