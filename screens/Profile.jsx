@@ -79,7 +79,7 @@ export default function Profile({ navigation }) {
           <View>
             <Image
               style={styles.avatar}
-              source={{ uri: avatar }}
+              source={{ uri: 'https://i.imgur.com/o0rvBhP.png' }}
             />
           </View>
         </View>
