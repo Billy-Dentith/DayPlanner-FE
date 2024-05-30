@@ -60,11 +60,9 @@ export default function MapRoute({ routeCoords, selectedSights, savedRouteSights
 
     getLocation();
 
-    console.log('selected sights:', selectedSights);
-    console.log('route coords:', routeCoords);
-    console.log('saved route sights:', savedRouteSights);
-
   }, []);
+
+  console.log(routeCoords.routePolyLine);
 
   return (
     <View style={styles.container}>

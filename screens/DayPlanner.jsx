@@ -35,39 +35,12 @@ const RoutePlanner = () => {
     setSelectedSights(sightsArr);
 
     try {
-      const route = getRoute(user.displayName, sightsArr);
+      const route = await getRoute(user.displayName, sightsArr);
       setRouteCoords(route);
     } catch (err) {
       console.error("Failed to get route: ", err)
     }
   };
-
-  console.log(savedRouteId);
-
-  
-  useEffect(() => {
-    console.log('hello in use effect');
-  }, [savedRouteId])
-    // , [props.location.pathname])
-    // const saveRoute = (newState) => {
-    //   return new Promise((resolve, reject) => {
-    //     return resolve(setSavedRoute(newState))
-    //   })
-    // }
-    // const fetchSavedRoute = async () => {
-    //   console.log('hello in fetchSAvedRoute');
-    //   if (!!savedRouteId) {
-    //     try {
-    //       const route = await getRouteById(savedRouteId.toString())
-    //       console.log('route: ', route);
-    //       await saveRoute(route)
-    //     } catch (err) {
-    //       console.error("Failed to get saved route: ", err)
-    //     }
-    //   }
-    // }
-    // fetchSavedRoute();
-  
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -98,15 +71,12 @@ const RoutePlanner = () => {
     </TouchableOpacity>
   )
 
-  console.log('saver Route: ', savedRoute);
-
-  if (routeCoords || savedRouteId) {
+  if (routeCoords) {
     return (
       <View style={styles.container}>
         <MapRoute 
-          routeCoords={routeCoords || savedRoute} 
+          routeCoords={routeCoords} 
           selectedSights={selectedSights} 
-          savedRouteSights={savedRoute.sights}
         />
         <TouchableOpacity
         style={styles.endButton}
