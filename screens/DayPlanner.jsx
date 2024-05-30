@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 // import RouteForm from '../components/RouteForm'
 import { SightsContext } from "../context/SightsContext";
 import SightItem from '../components/SightItem'
@@ -7,6 +7,8 @@ import { getRoute } from "../api";
 import { AuthContext } from "../context/AuthContext";
 import MapRoute from "../components/MapComponent";
 import { getRouteById } from "../api";
+import { useIsFocused, useNavigation, useFocusEffect } from "@react-navigation/native";
+
 
 const RoutePlanner = () => {
   const { user } = useContext(AuthContext);
@@ -39,20 +41,33 @@ const RoutePlanner = () => {
       console.error("Failed to get route: ", err)
     }
   };
+
+  console.log(savedRouteId);
+
   
   useEffect(() => {
-    const fetchSavedRoute = async () => {
-      if (savedRouteId) {
-        try {
-          const route = await getRouteById(savedRouteId.toString())
-          setSavedRoute(route)
-        } catch (err) {
-          console.error("Failed to get saved route: ", err)
-        }
-      }
-    }
-    fetchSavedRoute();
+    console.log('hello in use effect');
   }, [savedRouteId])
+    // , [props.location.pathname])
+    // const saveRoute = (newState) => {
+    //   return new Promise((resolve, reject) => {
+    //     return resolve(setSavedRoute(newState))
+    //   })
+    // }
+    // const fetchSavedRoute = async () => {
+    //   console.log('hello in fetchSAvedRoute');
+    //   if (!!savedRouteId) {
+    //     try {
+    //       const route = await getRouteById(savedRouteId.toString())
+    //       console.log('route: ', route);
+    //       await saveRoute(route)
+    //     } catch (err) {
+    //       console.error("Failed to get saved route: ", err)
+    //     }
+    //   }
+    // }
+    // fetchSavedRoute();
+  
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -83,7 +98,7 @@ const RoutePlanner = () => {
     </TouchableOpacity>
   )
 
-  console.log(savedRoute);
+  console.log('saver Route: ', savedRoute);
 
   if (routeCoords || savedRouteId) {
     return (

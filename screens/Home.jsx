@@ -57,7 +57,7 @@ export default function MapScreen() {
     const interval = setInterval(() => {
       setUpdateTime(updateTime + 1)
       
-    }, 20000)
+    }, 60000)
     const getLocation = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
