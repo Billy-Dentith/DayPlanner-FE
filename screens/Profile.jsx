@@ -6,32 +6,43 @@ import {
     Image,
     TouchableOpacity,
   } from "react-native";
-import React, { useContext, useDeferredValue, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { deleteRouteById, getRouteById, getSavedRoutes, getUserByUsername } from "../api";
-import { SightsContext } from "../context/SightsContext";
 import MapRoute from "../components/MapComponent";
 import { Ionicons } from "@expo/vector-icons";
+import Loading from '../components/Loading';
 
 export default function Profile({ navigation }) {
   const [userDB, setUserDB] = useState({});
   const { handleSignOut, user, avatar } = useContext(AuthContext);
-  // const { setSavedRouteId } = useContext(SightsContext);
   const [savedRoute, setSavedRoute] = useState();
   const [savedRoutes, setSavedRoutes] = useState([]);
   const [refreshPage, setRefreshPage] = useState(0);
+  const [isUserLoading, setIsUserLoading] = useState(true);
+  const [isRoutesLoading, setIsRoutesLoading] = useState(true);
+  const [userErrorMsg, setUserErrorMsg] = useState('');
+  const [routeErrorMsg, setRouteErrorMsg] = useState('');
 
   useEffect(() => {
     getUserByUsername(user.displayName)
       .then((res) => {
         setUserDB(res);
+        setIsUserLoading(false);
+        setUserErrorMsg('')
         return getSavedRoutes(user.displayName);
       })
       .then((res) => {
         setSavedRoutes(res);
+        setIsRoutesLoading(false);
+        setRouteErrorMsg('')
       })
       .catch((err) => {
         console.log(err)
+        setIsRoutesLoading(false);
+        setIsUserLoading(false);
+        setUserErrorMsg('Unable to fetch user details');
+        setRouteErrorMsg('Unable to fetch saved routes');
       })
 
   }, [user, refreshPage])
@@ -74,21 +85,30 @@ export default function Profile({ navigation }) {
         </View>
         <View style={styles.infoContainer}>
           <Text style={styles.textTitle}>User Information</Text>
-          <Text style={styles.text}>
-            Name:{"  "}
-            <Text style={styles.line}>{userDB.displayName}</Text>
-          </Text>
-          <Text style={styles.text}>
-            Username:{"  "}
-            <Text style={styles.line}>{userDB.username}</Text>
-          </Text>
-          <Text style={styles.text}>
-            Location:{"  "}
-            <Text style={styles.line}>{userDB.location}</Text>
-          </Text>
+          {isUserLoading ? <Loading /> : (
+            <>
+              <Text style={styles.text}>
+                Name:{"  "}
+                <Text style={styles.line}>{userDB.displayName}</Text>
+              </Text>
+              <Text style={styles.text}>
+                Username:{"  "}
+                <Text style={styles.line}>{userDB.username}</Text>
+              </Text>
+              <Text style={styles.text}>
+                Location:{"  "}
+                <Text style={styles.line}>{userDB.location}</Text>
+              </Text>
+            </>
+          )}
+          {userErrorMsg && (
+            <Text>{userErrorMsg}</Text>
+          )}
         </View>
         <View style={styles.infoContainer}>
           <Text style={styles.textTitle}>Saved Routes</Text>
+          {isRoutesLoading ? <Loading /> : (
+          <>
           {savedRoutes.map((route) => (
               <View style={styles.routeContainer} key={route._id}>
                 <TouchableOpacity
@@ -111,7 +131,12 @@ export default function Profile({ navigation }) {
                     size={40}
                   />
               </View>
-            )
+              )
+            )}
+          </>
+          )}
+          {routeErrorMsg && (
+            <Text>{routeErrorMsg}</Text>
           )}
         </View>
         <View style={styles.container}>
