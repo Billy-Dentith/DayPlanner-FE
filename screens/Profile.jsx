@@ -8,88 +8,151 @@ import {
   } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { getSavedRoutes, getUserByUsername } from "../api";
+import { deleteRouteById, getRouteById, getSavedRoutes, getUserByUsername } from "../api";
+import MapRoute from "../components/MapComponent";
+import { Ionicons } from "@expo/vector-icons";
+import Loading from '../components/Loading';
 
-export default function Profile() {
+export default function Profile({ navigation }) {
   const [userDB, setUserDB] = useState({});
   const { handleSignOut, user, avatar } = useContext(AuthContext);
-  const [savedRoutes, setSavedRoutes] = useState([])
+  const [savedRoute, setSavedRoute] = useState();
+  const [savedRoutes, setSavedRoutes] = useState([]);
+  const [refreshPage, setRefreshPage] = useState(0);
+  const [isUserLoading, setIsUserLoading] = useState(true);
+  const [isRoutesLoading, setIsRoutesLoading] = useState(true);
+  const [userErrorMsg, setUserErrorMsg] = useState('');
+  const [routeErrorMsg, setRouteErrorMsg] = useState('');
 
   useEffect(() => {
-    getUserByUsername(user.displayName).then((res) => {
-      setUserDB(res);
-    }).then(() => {
-      return getSavedRoutes(user.displayName).then((res) => {
+    getUserByUsername(user.displayName)
+      .then((res) => {
+        setUserDB(res);
+        setIsUserLoading(false);
+        setUserErrorMsg('')
+        return getSavedRoutes(user.displayName);
+      })
+      .then((res) => {
         setSavedRoutes(res);
-      }).catch((err) => console.log(err))
-    }).catch((err) => console.log(err))
-    
-  }, [user])
+        setIsRoutesLoading(false);
+        setRouteErrorMsg('')
+      })
+      .catch((err) => {
+        console.log(err)
+        setIsRoutesLoading(false);
+        setIsUserLoading(false);
+        setUserErrorMsg('Unable to fetch user details');
+        setRouteErrorMsg('Unable to fetch saved routes');
+      })
+
+  }, [user, refreshPage])
+
+  const handleRoutePress = (routeId) => {
+    getRouteById(routeId).then((res) => setSavedRoute(res))
+  }
+
+  const handleDelete = (routeId) => {
+    deleteRouteById(routeId).then(() => {
+      setRefreshPage(refreshPage + 1)
+    })
+  }
   
-  return (
-    <ScrollView>
+  if (savedRoute) {
+    return (
       <View style={styles.container}>
-        <View>
-          <Image
-            style={{
-              width: 200,
-              height: 200,
-              borderRadius: 100,
-              borderColor: "#6F848c",
-              borderWidth: 7,
-              marginBottom: 20,
-            }}
-            source={{ uri: avatar }}
-          />
-        </View>
-      </View>
-      <View style={styles.infoContainer}>
-        <Text style={styles.textTitle}>User Information</Text>
-        <Text style={styles.text}>
-          Name:{"  "}
-          <Text style={styles.line}>{userDB.displayName}</Text>
-        </Text>
-        <Text style={styles.text}>
-          Username:{"  "}
-          <Text style={styles.line}>{userDB.username}</Text>
-        </Text>
-        <Text style={styles.text}>
-          Location:{"  "}
-          <Text style={styles.line}>{userDB.location}</Text>
-        </Text>
-      </View>
-      <View style={styles.infoContainer}>
-        <Text style={styles.textTitle}>Saved Routes</Text>
-        {savedRoutes.map((route) => {
-          return (
-            <View style={styles.routeContainer} key={route.id}>
-              <Text style={styles.text}>
-                Route Name:{"  "}
-                <Text style={styles.text}>{route.name}</Text>
-              </Text>
-              <Text style={styles.text}>
-                Number of Sights:{"  "}
-                <Text style={styles.text}>{route.sights.length}</Text>
-              </Text>
-            </View>
-          )
-        })}
-      </View>
-      <View style={styles.container}>
-        <TouchableOpacity style={styles.button} onPress={handleSignOut}>
-          <Text style={styles.buttonText}>Sign out</Text>
+        <MapRoute 
+          routeCoords={savedRoute} 
+          selectedSights={savedRoute.sights}
+        />
+        <TouchableOpacity
+        style={styles.endButton}
+          onPress={() => setSavedRoute()}
+        >
+          <Text style={styles.endButtonText}>Clear</Text>
         </TouchableOpacity>
       </View>
-    </ScrollView>
-  );
+    )
+  } else {
+    return (
+      <ScrollView>
+        <View style={styles.container}>
+          <View>
+            <Image
+              style={styles.avatar}
+              source={{ uri: 'https://i.imgur.com/o0rvBhP.png' }}
+            />
+          </View>
+        </View>
+        <View style={styles.infoContainer}>
+          <Text style={styles.textTitle}>User Information</Text>
+          {isUserLoading ? <Loading /> : (
+            <>
+              <Text style={styles.text}>
+                Name:{"  "}
+                <Text style={styles.line}>{userDB.displayName}</Text>
+              </Text>
+              <Text style={styles.text}>
+                Username:{"  "}
+                <Text style={styles.line}>{userDB.username}</Text>
+              </Text>
+              <Text style={styles.text}>
+                Location:{"  "}
+                <Text style={styles.line}>{userDB.location}</Text>
+              </Text>
+            </>
+          )}
+          {userErrorMsg && (
+            <Text>{userErrorMsg}</Text>
+          )}
+        </View>
+        <View style={styles.infoContainer}>
+          <Text style={styles.textTitle}>Saved Routes</Text>
+          {isRoutesLoading ? <Loading /> : (
+          <>
+          {savedRoutes.map((route) => (
+              <View style={styles.routeContainer} key={route._id}>
+                <TouchableOpacity
+                  onPress={() => handleRoutePress(route._id)}
+                >
+                  <Text style={styles.text}>
+                    Route Name:{"  "}
+                    <Text style={styles.text}>{route.name}</Text>
+                  </Text>
+                  <Text style={styles.text}>
+                    Number of Sights:{"  "}
+                    <Text style={styles.text}>{route.sights.length}</Text>
+                  </Text>
+                </TouchableOpacity>
+                  <Ionicons
+                    onPress={() => handleDelete(route._id)}
+                    style={styles.icon}
+                    name="close-outline"
+                    color={"dimgray"}
+                    size={40}
+                  />
+              </View>
+              )
+            )}
+          </>
+          )}
+          {routeErrorMsg && (
+            <Text>{routeErrorMsg}</Text>
+          )}
+        </View>
+        <View style={styles.container}>
+          <TouchableOpacity style={styles.button} onPress={handleSignOut}>
+            <Text style={styles.buttonText}>Sign out</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
-    marginTop: 20,
     paddingTop: 20,
   },
   button: {
@@ -141,7 +204,39 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 15,
     borderColor: '#6F848c',
-    padding: 10
-  }
+    padding: 10,
+    flexDirection: 'row',
+  },
+  avatar: {
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    borderColor: "dimgray",
+    borderWidth: 7,
+    marginBottom: 20,
+  },
+  endButton: {
+    backgroundColor: "white",
+    width: "90%",
+    padding: 8,
+    alignSelf: "center",
+    alignItems: 'center',
+    marginTop: 10,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
+    fontWeight: 'bold'
+  },
+  endButtonText: {
+    fontSize: 16,
+  },
+  icon: {
+    marginLeft: 50,
+    marginBottom: 10,
+    alignSelf: 'center',
+  },
 });
   

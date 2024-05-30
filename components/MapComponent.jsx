@@ -15,15 +15,15 @@ import MapView from 'react-native-maps'
 import * as Location from "expo-location";
 import mapStyle from "../styles/mapStyle";
 // import { MARKERS_DATA } from "../data";
-import { getAllSights, patchUser } from "../api";
 import { AuthContext } from '../context/AuthContext'
 import { SightsContext } from "../context/SightsContext";
 
-const { height } = Dimensions.get("window");
-const { width } = Dimensions.get("window");
+// const { height } = Dimensions.get("window");
+// const { width } = Dimensions.get("window");
 
-export default function MapRoute({ routeCoords, selectedSights }) {
-  const { user } = useContext(AuthContext)
+export default function MapRoute({ routeCoords, selectedSights, savedRouteSights }) {
+  // const { user } = useContext(AuthContext);
+  // const { savedRouteId } = useContext(SightsContext);
   const mapRef = useRef();
   const [currentLocation, setCurrentLocation] = useState(null);
   const [initialRegion, setInitialRegion] = useState(null);
@@ -62,6 +62,8 @@ export default function MapRoute({ routeCoords, selectedSights }) {
 
   }, []);
 
+  console.log(routeCoords.routePolyLine);
+
   return (
     <View style={styles.container}>
       <MapView
@@ -87,17 +89,12 @@ export default function MapRoute({ routeCoords, selectedSights }) {
             image={require("../assets/map_marker.png")}
           />
         ))}
-        {/* <MapViewDirections 
-        origin={routeCoords[0]}
-        destination={routeCoords[routeCoords.length - 1]}
-        apikey={`${process.env.GOOGLE_API_KEY}`}
-        strokeWidth={4}
-        strokeColor='#111111'/> */}
-        <Polyline 
+        {routeCoords && (<Polyline 
             coordinates={routeCoords.routePolyLine}
             strokeWidth={4}
             strokeColor="#111111"
-        />
+          />
+        )}
       </MapView>
       {selectedLocation && (
         <View style={styles.detailCard}>

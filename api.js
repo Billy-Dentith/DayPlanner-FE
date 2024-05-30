@@ -75,3 +75,13 @@ export const getSavedRoutes = async (username) => {
 
     return response.data;
 }
+
+export const getRouteById = async (routeId) => {
+    const response = await dayPlannerApi.get(`/routes/${routeId}`);
+
+    return response.data;
+}
+
+export const deleteRouteById = async (routeId) => {
+    const response = await dayPlannerApi.delete(`/routes/${routeId}`);
+}

@@ -26,6 +26,7 @@ import historic from "../assets/historic_marker.png";
 import shop from "../assets/shop_marker.png";
 import leisure from "../assets/leisure_marker.png";
 import tourism from "../assets/tourism_marker.png";
+import Loading from '../components/Loading';
 
 const { height } = Dimensions.get("window");
 
@@ -39,7 +40,8 @@ export default function MapScreen() {
   const [initialRegion, setInitialRegion] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(null);
 
-  const [errorMsg, setErrorMsg] = useState(null);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
   const [updateTime, setUpdateTime] = useState(0);
 
   const [searchRadius, setSearchRadius] = useState(1000);
@@ -57,7 +59,7 @@ export default function MapScreen() {
     const interval = setInterval(() => {
       setUpdateTime(updateTime + 1)
       
-    }, 20000)
+    }, 60000)
     const getLocation = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
@@ -106,8 +108,14 @@ export default function MapScreen() {
       })
       .then((res) => {
         setUsersSights(res);
+        setIsLoading(false);
+        setErrorMsg('')
       })
-      console.log(updateTime)
+      .catch((err) => {
+        console.log(err)
+        setIsLoading(false)
+        setErrorMsg('Unable to fetch sights')
+      })
     return () => clearInterval(interval)
   }, [updateTime])
 
@@ -121,6 +129,7 @@ export default function MapScreen() {
           googleMapsApiKey={`${process.env.GOOGLE_API_KEY}`}
           ref={mapRef}
           initialRegion={initialRegion}
+          showsUserLocation={true}
         >
           {usersSights.map((sight) => {
             let type = "Default";
@@ -153,6 +162,7 @@ export default function MapScreen() {
           })}
         </MapView>
       </View>
+      {isLoading ? <Loading /> : (
       <FlatList
         data={usersSights}
         keyExtractor={(item) => item.id}
@@ -171,7 +181,7 @@ export default function MapScreen() {
           </TouchableOpacity>
         )}
         style={styles.list}
-      />
+      />)}
       {selectedLocation && (
         <View style={styles.detailCard}>
           <Text style={styles.detailTitle}>{selectedLocation.tags.name}</Text>
