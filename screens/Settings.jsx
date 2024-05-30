@@ -34,7 +34,7 @@ export default function SettingsScreen({ navigation }) {
   }, [])
 
     return (
-        <ScrollView>
+        <ScrollView style={styles.container}>
           <Text style={styles.title}>Map Preferences</Text>
             <PreferencesForm usersInterests={usersInterests} setUsersInterests={setUsersInterests} currentRadius={currentRadius} navigation={navigation}></PreferencesForm>
           <Text style={styles.title}>Change your avatar:</Text>
@@ -58,13 +58,16 @@ export default function SettingsScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    backgroundColor: '#6F848c',
+  },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     alignSelf: 'left',
     marginLeft: 15,
     marginTop: 20,
-    color: "dimgray",
+    color: "white",
   },
   avatarContainer: {
     flexDirection: 'row',
@@ -73,16 +76,16 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   avatar: {
-    width: 80,
-    height: 80,
+    width: 65,
+    height: 65,
     borderRadius: 40,
     marginHorizontal: 10,
     borderWidth: 2,
     borderColor: 'white',
   },
   selectedAvatar: {
-    width: 100,
-    height: 100,
+    width: 80,
+    height: 80,
     borderColor: 'yellow',
   },
 })

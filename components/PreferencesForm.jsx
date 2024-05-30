@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
         marginLeft: 5,
         marginTop: 10,
         marginBottom: 10,
-        color: "dimgray",
+        color: "white",
     },
     button: {
         backgroundColor: "dimgray",
@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginTop: 5,
         marginBottom: 0,
+        // color: 'white'
       },
       buttonText: {
         color: "white",

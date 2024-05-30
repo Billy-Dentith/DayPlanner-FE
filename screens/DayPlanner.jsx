@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     marginTop: 15,
     marginBottom: 20,
-    color: "dimgray",
+    color: "#17343E",
   },
   text: {
     fontSize: 20,
@@ -142,10 +142,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   selectedOption: {
-    backgroundColor: 'lightblue',
+    backgroundColor: '#6F848c',
   },
   optionText: {
-    color: 'dimgray',
+    color: '#17343E',
     fontSize: 18,
     textTransform: 'capitalize',
     fontWeight: 'bold',

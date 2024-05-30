@@ -93,8 +93,10 @@ export default function MapScreen() {
           user.displayName,
           undefined,
           radius,
-          Location.longitude,
-          Location.latitude,
+          // Location.longitude,
+          // Location.latitude,
+          -0.13071,
+          51.52813,
           undefined
         );
       })
@@ -204,7 +206,7 @@ export default function MapScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#ccc",
+    // backgroundColor: "#ccc",
     flex: 1,
     justifyContent: "center",
   },
@@ -228,16 +230,23 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   item: {
-    margin: "auto",
     alignItems: "center",
-    backgroundColor: "rgb(235,235,235)",
+    backgroundColor: "white",
     padding: 20,
     borderBottomWidth: 5,
-    borderBottomColor: "#ccc",
+    // borderBottomColor: "white",
+    borderColor: '#6F848c',
+    borderWidth: 1,
     width: width - 10,
     borderRadius: 15,
-    zIndex: 1,
-    elevation: 1,
+    alignSelf: 'center',
+    marginBottom: 2,
+    elevation:3,
+    zIndex:3,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.8,
+    shadowRadius: 1,
+    
   },
   detailCard: {
     flex: 1,
@@ -248,7 +257,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     padding: 15,
     borderTopWidth: 1,
-    borderTopColor: "#ccc",
+    borderTopColor: "white",
     alignItems: "center",
     margin: "auto",
     borderTopLeftRadius: 15,
@@ -286,5 +295,9 @@ const styles = StyleSheet.create({
   },
   nameCard: {
     textTransform: "capitalize",
+    backgroundColor: "white",
+    fontSize:16,
+    fontWeight: 'bold',
+    color: '#17343E'
   },
 });
